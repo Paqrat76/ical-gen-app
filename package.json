@@ -1,0 +1,63 @@
+{
+  "name": "ical-gen-app",
+  "version": "0.1.0",
+  "description": "Consumes JSON containing calendar event data and generates an iCalendar file",
+  "keywords": ["node", "TypeScript", "JSON", "iCalendar", "iCal", "ics", "generator"],
+  "author": "Joe Paquette <paqdev76@protonmail.com>",
+  "homepage": "https://github.com/Paqrat76/ical-gen-app/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/Paqrat76/ical-gen-app/issues",
+    "email": "paqdev76@protonmail.com"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@jest/globals": "^30.2.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.23",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^24.10.12",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^29.13.0",
+    "eslint-plugin-jsdoc": "^62.5.4",
+    "eslint-plugin-node-import": "^1.1.1",
+    "globals": "^17.3.0",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "jest-circus": "^30.2.0",
+    "lint-staged": "^16.2.7",
+    "markdownlint-cli": "^0.47.0",
+    "opener": "^1.5.2",
+    "prettier": "^3.8.1",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.55.0"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.3.0"
+  },
+  "lint-staged": {
+    "*.{json,yaml}": "prettier --write",
+    "*.md": [
+      "prettier --write",
+      "npm run lint:docs"
+    ],
+    "*.{ts,js,mjs}": [
+      "prettier --write",
+      "npm run lint -- --max-warnings 0 --no-warn-ignored"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Paqrat76/ical-gen-app.git"
+  }
+}
