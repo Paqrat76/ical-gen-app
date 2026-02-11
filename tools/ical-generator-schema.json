@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "allDayEvent": {
+      "type": "object",
+      "properties": {
+        "allDayStart": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "allDayStart"
+      ]
+    },
+    "timedEvent": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "event": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/allDayEvent"
+        },
+        {
+          "$ref": "#/definitions/timedEvent"
+        }
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "recurrenceRule": {
+          "type": "string"
+        },
+        "recurrenceDates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exceptionDates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "summary"
+      ]
+    }
+  },
+  "type": "object",
+  "$id": "http://Paqrat76/ical-gen-app",
+  "title": "Paqrat76/ical-gen-app Schema",
+  "description": "Defines the JSON schema for the iCalendar JSON source file consumed by the Paqrat76/ical-gen-app CLI application",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/event"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "name",
+    "events"
+  ]
+}
