@@ -1,6 +1,6 @@
 {
   "name": "ical-gen-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Consumes JSON containing calendar event data and generates an iCalendar file",
   "keywords": [
     "node",
@@ -18,7 +18,12 @@
     "email": "paqdev76@protonmail.com"
   },
   "license": "MIT",
-  "main": "index.js",
+  "bin": {
+    "iCalGenerator": "./dist/cli.js"
+  },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "clean": "rm -rf tsconfig.tsbuildinfo dist coverage",
     "build": "tsc",
@@ -30,28 +35,34 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "jest:clear": "jest --clearCache",
-    "gen:schema": "ts-node tools/create-json-schema.ts > tools/ical-generator-schema.json",
+    "gen:schema": "ts-node tools/create-json-schema.ts > src/schema/ical-gen-app-schema.json",
     "prepare": "husky"
   },
+  "overrides": {
+    "minimatch": "10.2.2"
+  },
   "dependencies": {
-    "ajv": "^8.17.1",
+    "@commander-js/extra-typings": "^14.0.0",
+    "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
+    "commander": "^14.0.3",
+    "figlet": "^1.10.0",
     "ical-generator": "^10.0.0",
+    "kleur": "^4.1.5",
+    "luxon": "^3.7.2",
     "rrule": "^2.8.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.2.0",
-    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.23",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^25.2.3",
-    "eslint": "^9.39.2",
+    "@types/node": "^25.3.1",
+    "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jest": "^29.13.0",
-    "eslint-plugin-jsdoc": "^62.5.4",
-    "eslint-plugin-node-import": "^1.1.1",
+    "eslint-plugin-jest": "^29.15.0",
+    "eslint-plugin-jsdoc": "^62.7.1",
+    "eslint-plugin-node-import": "^1.2.0",
     "fluent-json-schema": "^6.0.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
@@ -59,12 +70,11 @@
     "jest-circus": "^30.2.0",
     "lint-staged": "^16.2.7",
     "markdownlint-cli": "^0.47.0",
-    "opener": "^1.5.2",
     "prettier": "^3.8.1",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript-eslint": "^8.56.1"
   },
   "engines": {
     "node": ">=24.0.0",

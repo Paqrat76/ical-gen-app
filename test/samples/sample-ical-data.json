@@ -1,0 +1,37 @@
+{
+  "name": "Sample Calendar",
+  "description": "Sample Calendar Description",
+  "events": [
+    {
+      "summary": "All Day Event",
+      "description": "Sample one time all day event description",
+      "allDayStart": "2026-11-11",
+      "categories": ["Category"],
+      "location": "Sample Location, 123 Main St, Anytown, USA"
+    },
+    {
+      "summary": "Recurring All Day Event",
+      "description": "Sample recurring all day event description; Use 'RRULE' value from https://icalendar.org/rrule-tool.html",
+      "allDayStart": "2026-07-04",
+      "categories": ["Category1", "Category2"],
+      "recurrenceRule": "RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=7;BYMONTHDAY=4;COUNT=10"
+    },
+    {
+      "summary": "Timed Event",
+      "description": "Sample one time timed event description",
+      "start": "2026-03-15T18:00:00-04:00",
+      "end": "2026-03-15T20:00:00-04:00",
+      "categories": ["Category3"],
+      "location": "Sample Location, 123 Main St, Anytown, USA"
+    },
+    {
+      "summary": "Recurring Timed Event",
+      "description": "Sample recurring timed event description",
+      "start": "2026-03-15T18:00:00-04:00",
+      "end": "2026-03-15T20:00:00-04:00",
+      "categories": ["Category4", "Category5"],
+      "location": "Sample Location, 123 Main St, Anytown, USA",
+      "recurrenceRule": "RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=1;UNTIL=20270101T000000Z"
+    }
+  ]
+}

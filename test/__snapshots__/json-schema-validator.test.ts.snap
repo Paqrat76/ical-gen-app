@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`validateICalendarJson should handle missing required fields as invalid 1`] = `
+[
+  {
+    "instancePath": "/events",
+    "keyword": "minItems",
+    "message": "must NOT have fewer than 1 items",
+    "params": {
+      "limit": 1,
+    },
+    "schemaPath": "#/properties/events/minItems",
+  },
+]
+`;
+
+exports[`validateICalendarJson should return invalid result for JSON not adhering to schema 1`] = `
+[
+  {
+    "instancePath": "/events/0",
+    "keyword": "required",
+    "message": "must have required property 'allDayStart'",
+    "params": {
+      "missingProperty": "allDayStart",
+    },
+    "schemaPath": "#/definitions/allDayEvent/required",
+  },
+  {
+    "instancePath": "/events/0/start",
+    "keyword": "format",
+    "message": "must match format "date-time"",
+    "params": {
+      "format": "date-time",
+    },
+    "schemaPath": "#/definitions/timedEvent/properties/start/format",
+  },
+  {
+    "instancePath": "/events/0/end",
+    "keyword": "format",
+    "message": "must match format "date-time"",
+    "params": {
+      "format": "date-time",
+    },
+    "schemaPath": "#/definitions/timedEvent/properties/end/format",
+  },
+  {
+    "instancePath": "/events/0",
+    "keyword": "oneOf",
+    "message": "must match exactly one schema in oneOf",
+    "params": {
+      "passingSchemas": null,
+    },
+    "schemaPath": "#/oneOf",
+  },
+]
+`;

@@ -21,13 +21,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-02-26
+
+### Added
+
+- bin for `iCalGenerator`
+- Generated JSON schema for iCalendar data JSON file
+- All source code and minimal tests
+
+### Changed
+
+- Updated dependencies
+- Updated ical-data-specification.md
+- Updated JSON schema generator script
+
+### Security
+
+- Applied security "overrides"
+  - minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern (patch in 10.2.2)
+    [CVE-2026-26996](https://github.com/advisories/GHSA-3ppc-4f35-3m26)
+  - ajv has ReDoS when using `$data` option
+    [CVE-2025-69873](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6) (patch in 8.18.0)
+
+
 ## [0.2.0] - 2026-02-11
 
 ### Added
 
 - ical-data-specification.md
 - Experimental tests
-- Tool to create the ical-generator-schema.json
+- Tool to create the ical-gen-app-schema.json
 
 ### Changed
 

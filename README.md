@@ -23,6 +23,5 @@ or "every other week".
 
 - [sebbo2002/ical-generator](https://www.npmjs.com/package/ical-generator) - Library with which you can very easily
   create a valid iCal calendar
-  - [Feature Request: Add support for iCalandar Recurrance Date-Times (RDATE)](https://github.com/sebbo2002/ical-generator/issues/718#issuecomment-3820156443)
 - [jakubroztocil/rrule](https://www.npmjs.com/package/rrule) - Library for working with recurrence rules for calendar
   dates
