@@ -1,12 +1,14 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import ical, { ICalEventClass, ICalEventTransparency } from 'ical-generator';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
+import { RRule, rrulestr } from 'rrule';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 
 describe('Experimentation Tests', () => {
   describe('Event Creation', () => {
+    // TODO: Add tests for start & end data/datetime values (want to use ISO 8601 values for these)
+
     it('should generate snapshot iCalendar', () => {
       // For snapshot testing, set the stamp value to a fixed date
       const tstamp = new Date(2025, 0, 1, 0, 0, 0, 0);
@@ -82,56 +84,56 @@ describe('Experimentation Tests', () => {
       expect(iCalString).toMatchSnapshot();
     });
 
-    it('should generate snapshot iCalendar for complex recurrence', () => {
-      // For snapshot testing, set the stamp value to a fixed date
-      const tstamp = new Date(2025, 0, 1, 0, 0, 0, 0);
-
-      const calendar = ical({
-        name: 'My Second iCal',
-        description: 'This is an example iCalendar with complex recurrence',
-        prodId: '-//Paqrat76//ical-generator//EN',
-      });
-
-      const rruleSet = new RRuleSet();
-
-      const rruleStr0 = 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=10';
-      const rrule0: RRule = rrulestr(rruleStr0);
-      expect(rrule0).toBeDefined();
-      expect(rrule0.toString()).toStrictEqual(rruleStr0);
-
-      rruleSet.rrule(rrule0);
-      rruleSet.rdate(new Date(2025, 2, 25));
-      rruleSet.rdate(new Date(2025, 3, 25));
-      rruleSet.exdate(new Date(2025, 2, 15));
-      rruleSet.exdate(new Date(2025, 3, 15));
-
-      calendar.createEvent({
-        stamp: tstamp,
-        allDay: true,
-        start: new Date(2026, 0, 1),
-        id: '1e1e6f37-9ac4-47eb-a9ea-e19666afd322',
-        categories: [{ name: 'US FEDERAL HOLIDAY' }, { name: 'HOLIDAY' }],
-        class: ICalEventClass.PUBLIC,
-        summary: `First Day`,
-        transparency: ICalEventTransparency.TRANSPARENT,
-        repeating: rruleSet,
-      });
-
-      const iCalString = calendar.toString();
-      expect(iCalString).toMatchSnapshot();
-    });
+    // it('should generate snapshot iCalendar for complex recurrence', () => {
+    //   // For snapshot testing, set the stamp value to a fixed date
+    //   const tstamp = new Date(2025, 0, 1, 0, 0, 0, 0);
+    //
+    //   const calendar = ical({
+    //     name: 'My Second iCal',
+    //     description: 'This is an example iCalendar with complex recurrence',
+    //     prodId: '-//Paqrat76//ical-generator//EN',
+    //   });
+    //
+    //   const rruleSet = new RRuleSet();
+    //
+    //   const rruleStr0 = 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=10';
+    //   const rrule0: RRule = rrulestr(rruleStr0);
+    //   expect(rrule0).toBeDefined();
+    //   expect(rrule0.toString()).toStrictEqual(rruleStr0);
+    //
+    //   rruleSet.rrule(rrule0);
+    //   rruleSet.rdate(new Date(2025, 2, 25));
+    //   rruleSet.rdate(new Date(2025, 3, 25));
+    //   rruleSet.exdate(new Date(2025, 2, 15));
+    //   rruleSet.exdate(new Date(2025, 3, 15));
+    //
+    //   calendar.createEvent({
+    //     stamp: tstamp,
+    //     allDay: true,
+    //     start: new Date(2026, 0, 1),
+    //     id: '1e1e6f37-9ac4-47eb-a9ea-e19666afd322',
+    //     categories: [{ name: 'US FEDERAL HOLIDAY' }, { name: 'HOLIDAY' }],
+    //     class: ICalEventClass.PUBLIC,
+    //     summary: `First Day`,
+    //     transparency: ICalEventTransparency.TRANSPARENT,
+    //     repeating: rruleSet,
+    //   });
+    //
+    //   const iCalString = calendar.toString();
+    //   expect(iCalString).toMatchSnapshot();
+    // });
   });
 
   describe('Event Validation', () => {
     const filepath = path.join(__dirname, '..');
     let validate: ValidateFunction;
     beforeAll(() => {
-      // Use the 'strict: false' option while awaiting PR https://github.com/fastify/fluent-json-schema/pull/280#issue-3198794563
+      // Use the 'strictTypes: false' option while awaiting PR https://github.com/fastify/fluent-json-schema/pull/280#issue-3198794563
       // approval/merge/release
-      const ajv = new Ajv({ allErrors: true, strict: false });
+      const ajv = new Ajv({ allErrors: true, strictTypes: false });
       addFormats(ajv);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const iCalSchema = JSON.parse(fs.readFileSync(`${filepath}/tools/ical-generator-schema.json`, 'utf8'));
+      const iCalSchema = JSON.parse(fs.readFileSync(`${filepath}/src/schema/ical-gen-app-schema.json`, 'utf8'));
       validate = ajv.compile(iCalSchema);
     });
 
@@ -141,8 +143,8 @@ describe('Experimentation Tests', () => {
         events: [
           {
             allDayStart: `2025-03-15`,
-            id: '48e92d47-bdb0-4b01-8283-72bca4c34878',
             summary: 'Sample Event',
+            recurrenceRule: 'RRULE:FREQ=YEARLY',
           },
         ],
       };
@@ -158,7 +160,6 @@ describe('Experimentation Tests', () => {
           {
             start: `2025-03-15T10:00:00Z`,
             end: `2025-03-15T11:00:00Z`,
-            id: '48e92d47-bdb0-4b01-8283-72bca4c34878',
             summary: 'Sample Event',
           },
         ],
@@ -174,14 +175,59 @@ describe('Experimentation Tests', () => {
         events: [
           {
             allDayStart: `2025-03-15`,
-            id: '48e92d47-bdb0-4b01-8283-72bca4c34878',
             summary: 'Sample Event',
             description: 'Sample Description',
             categories: ['US FEDERAL HOLIDAY', 'HOLIDAY'],
             location: 'Bowman Grey Stadium, Winston Salem, NC',
             recurrenceRule: 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=5',
-            recurrenceDates: ['2025-03-25', '2025-04-25'],
-            exceptionDates: ['2025-03-15', '2025-04-15'],
+          },
+        ],
+      };
+      const valid = validate(iCalData);
+      if (!valid) console.log(validate.errors);
+      expect(valid).toBe(true);
+    });
+
+    it('should create and successfully validate timedEvent with all valid properties', () => {
+      const iCalData = {
+        name: 'My First iCal',
+        events: [
+          {
+            start: `2025-03-15T10:00:00Z`,
+            end: `2025-03-15T11:00:00Z`,
+            summary: 'Sample Event',
+            description: 'Sample Description',
+            categories: ['US FEDERAL HOLIDAY', 'HOLIDAY'],
+            location: 'Bowman Grey Stadium, Winston Salem, NC',
+            recurrenceRule: 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=5',
+          },
+        ],
+      };
+      const valid = validate(iCalData);
+      if (!valid) console.log(validate.errors);
+      expect(valid).toBe(true);
+    });
+
+    it('should create and successfully validate allDayEvent and timedEvent with all valid properties', () => {
+      const iCalData = {
+        name: 'My First iCal',
+        events: [
+          {
+            allDayStart: `2025-03-15`,
+            summary: 'Sample Event',
+            description: 'Sample Description',
+            categories: ['US FEDERAL HOLIDAY', 'HOLIDAY'],
+            location: 'Bowman Grey Stadium, Winston Salem, NC',
+            recurrenceRule: 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=5',
+          },
+          {
+            start: `2025-03-15T10:00:00Z`,
+            end: `2025-03-15T11:00:00Z`,
+            summary: 'Sample Event',
+            description: 'Sample Description',
+            categories: ['US FEDERAL HOLIDAY', 'HOLIDAY'],
+            location: 'Bowman Grey Stadium, Winston Salem, NC',
+            recurrenceRule: 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=15;COUNT=5',
           },
         ],
       };
@@ -198,13 +244,11 @@ describe('Experimentation Tests', () => {
             allDayStart: `2025-03-15`,
             start: `2025-03-15T10:00:00Z`,
             end: `2025-03-15T11:00:00Z`,
-            id: '48e92d47-bdb0-4b01-8283-72bca4c34878',
             summary: 'Sample Event',
           },
         ],
       };
       const valid = validate(iCalData);
-      //if (!valid) console.log(validate.errors);
       expect(valid).toBe(false);
       expect(validate.errors).toBeDefined();
       expect(validate.errors).toHaveLength(1);
@@ -227,13 +271,11 @@ describe('Experimentation Tests', () => {
           {
             start: `2025-03-15T10:00:00Z`,
             end: `2025-03-15T11:00:00Z`,
-            id: '48e92d47-bdb0-4b01-8283-72bca4c34878',
             summary: 'Sample Event',
           },
         ],
       };
       const valid = validate(iCalData);
-      //if (!valid) console.log(validate.errors);
       expect(valid).toBe(false);
       expect(validate.errors).toBeDefined();
       expect(validate.errors).toHaveLength(1);

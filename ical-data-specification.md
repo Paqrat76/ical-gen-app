@@ -72,20 +72,22 @@ Therefore, this generator only supports the most basic features of the iCalendar
   - `end`: DATE-TIME | DATE [DTEND](https://icalendar.org/iCalendar-RFC-5545/3-8-2-2-date-time-end.html)
   - `categories`: TEXT [CATEGORIES](https://icalendar.org/iCalendar-RFC-5545/3-8-1-2-categories.html)
     - Use for grouping events (e.g., US FEDERAL HOLIDAY, HOLIDAY, BIRTHDAY, ANNIVERSARY, OBSERVANCE, etc.)
-  - classification: TEXT [CLASS](https://icalendar.org/iCalendar-RFC-5545/3-8-1-3-classification.html)
+  - `class`: TEXT [CLASS](https://icalendar.org/iCalendar-RFC-5545/3-8-1-3-classification.html)
     - Fixed value: `CLASS:PUBLIC`
     - Automatically provided by this application
   - `summary`: TEXT [SUMMARY](https://icalendar.org/iCalendar-RFC-5545/3-8-1-12-summary.html)
     - Max length: 255 characters
   - `description`: TEXT [DESCRIPTION](https://icalendar.org/iCalendar-RFC-5545/3-8-1-5-description.html)
   - `location`: TEXT [LOCATION](https://icalendar.org/iCalendar-RFC-5545/3-8-1-7-location.html)
-  - transparency: TEXT [TRANSP](https://icalendar.org/iCalendar-RFC-5545/3-8-2-7-time-transparency.html)
+  - `transparency`: TEXT [TRANSP](https://icalendar.org/iCalendar-RFC-5545/3-8-2-7-time-transparency.html)
     - Automatically provided by this application-
     - Fixed value: `TRANSP:TRANSPARENT` for all day events
     - Fixed value: `TRANSP:OPAQUE` for regular events having a start and end time
   - `recurrence rule`: RECUR [RRULE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html)
     - Use [jakubroztocil/rrule](https://www.npmjs.com/package/rrule)
     - Limited support for this property by various calendars
+
+- Excluded Properties (not supported by multiple calendar implementations (e.g., Google, Proton, etc.))
   - `recurrence date-times`: RDATE [RDATE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-2-recurrence-date-times.html)
     - Use [jakubroztocil/rrule](https://www.npmjs.com/package/rrule)
     - Not supported by by various calendars

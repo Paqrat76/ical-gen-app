@@ -35,6 +35,7 @@ export default tsEslint.config(
     'jest.config.base.mjs',
     '**/jest.config.mjs',
     '**/temp/**',
+    'src/schema/ical-gen-app-schema.json',
   ]),
   {
     name: 'base',

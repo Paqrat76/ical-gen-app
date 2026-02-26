@@ -56,19 +56,8 @@
           "type": "string"
         },
         "recurrenceRule": {
-          "type": "string"
-        },
-        "recurrenceDates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "exceptionDates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string",
+          "pattern": "^RRULE:.+$"
         }
       },
       "required": [
