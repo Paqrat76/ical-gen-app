@@ -10,6 +10,8 @@ describe('ICalGeneratorApp', () => {
   const mockWriteFileSync = writeFileSync as jest.MockedFunction<typeof writeFileSync>;
   const mockExistsSync = existsSync as jest.MockedFunction<typeof existsSync>;
 
+  const appVersion = 'ical-gen-app@1.2.3';
+
   let icalGenSchema: string;
   beforeAll(async () => {
     // Read the schema here to avoid conflict with mockReadFileSync below
@@ -23,7 +25,7 @@ describe('ICalGeneratorApp', () => {
   describe('constructor', () => {
     it('should initialize with valid CLI options', () => {
       mockExistsSync.mockReturnValue(true);
-      const cliOptions: CliOptions = { sourceFile: '~/sample.json', debug: true };
+      const cliOptions: CliOptions = { appVersion: appVersion, sourceFile: '~/sample.json', debug: true };
       const app = new ICalGeneratorApp(cliOptions);
 
       expect(app).toBeInstanceOf(ICalGeneratorApp);
@@ -40,17 +42,17 @@ describe('ICalGeneratorApp', () => {
 
     it('should throw an error for invalid CLI options', () => {
       // @ts-expect-error: allow for test
-      let cliOptions: CliOptions = { debug: false };
+      let cliOptions: CliOptions = { appVersion: appVersion, debug: false };
       expect(() => new ICalGeneratorApp(cliOptions)).toThrow('sourceFile is required');
 
       mockExistsSync.mockReturnValue(false);
-      cliOptions = { sourceFile: '~/missing.json', debug: false };
+      cliOptions = { appVersion: appVersion, sourceFile: '~/missing.json', debug: false };
       expect(() => new ICalGeneratorApp(cliOptions)).toThrow('sourceFile does not exist: ~/missing.json');
     });
 
     it("should throw an error if the file doesn't have a .json extension", () => {
       mockExistsSync.mockReturnValue(true);
-      const cliOptions: CliOptions = { sourceFile: '~/example.txt' };
+      const cliOptions: CliOptions = { appVersion: appVersion, sourceFile: '~/example.txt' };
 
       expect(() => new ICalGeneratorApp(cliOptions)).toThrow(
         "sourceFile does not have a '.json' extension: example.txt",
@@ -77,7 +79,7 @@ describe('ICalGeneratorApp', () => {
       // generate() second call is for the schema
       mockReadFileSync.mockReturnValueOnce(icalGenSchema);
 
-      const cliOptions: CliOptions = { sourceFile: sourceFileName };
+      const cliOptions: CliOptions = { appVersion: appVersion, sourceFile: sourceFileName };
       const app = new ICalGeneratorApp(cliOptions);
 
       const message = app.generate();
@@ -94,7 +96,7 @@ describe('ICalGeneratorApp', () => {
       mockExistsSync.mockReturnValue(true);
       mockReadFileSync.mockReturnValue(JSON.stringify({ invalid: 'data' }));
 
-      const cliOptions: CliOptions = { sourceFile: 'invalid.json' };
+      const cliOptions: CliOptions = { appVersion: appVersion, sourceFile: 'invalid.json' };
       const app = new ICalGeneratorApp(cliOptions);
 
       const message = app.generate();
@@ -108,7 +110,7 @@ describe('ICalGeneratorApp', () => {
         throw new Error('Unexpected failure');
       });
 
-      const cliOptions: CliOptions = { sourceFile: 'corrupt.json' };
+      const cliOptions: CliOptions = { appVersion: appVersion, sourceFile: 'corrupt.json' };
       const app = new ICalGeneratorApp(cliOptions);
 
       expect(() => app.generate()).toThrow('Unexpected failure');

@@ -1,6 +1,7 @@
 # ical-gen-app
 
-The ical-gen-app commandline application consumes a JSON file containing calendar event data and generates an iCalendar file.
+The ical-gen-app command line application consumes a JSON file containing calendar event data and generates an iCalendar
+file.
 
 The intent is to use a JSON source file containg event details to generate an iCalendar file (e.g., `myCalendar.ics`)
 containing multiple fixed and/or recurring events for calendars that can be imported into various calendar applications.
@@ -23,5 +24,3 @@ or "every other week".
 
 - [sebbo2002/ical-generator](https://www.npmjs.com/package/ical-generator) - Library with which you can very easily
   create a valid iCal calendar
-- [jakubroztocil/rrule](https://www.npmjs.com/package/rrule) - Library for working with recurrence rules for calendar
-  dates

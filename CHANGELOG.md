@@ -21,6 +21,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-02-27
+
+### Added
+
+- Application name/version to error and debug messages
+- `docs` folder for project documentation
+
+### Changed
+
+- Updated `cli.ts` to simplify code and prevent unexpected errors
+- Updated README.md
+
+### Removed
+
+- Luxon dependency / Replaced use of Luxon DateTime for DTSTAMP value with native JavaScript Date
+
+### Fixed
+
+- Missing JSON schema for `iCalGenerator` in the `dist` folder
+
+### Security
+
+- Updated security "overrides"
+  - minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments (patch in 10.2.3)
+    [CVE-2026-27903](https://github.com/advisories/GHSA-7r86-cg39-jmmj)
+  - minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions (patch in 10.2.3)
+    [CVE-2026-27904](https://github.com/advisories/GHSA-23c5-xmqv-rm74)
+
+
 ## [0.3.0] - 2026-02-26
 
 ### Added
