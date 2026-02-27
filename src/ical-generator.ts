@@ -1,12 +1,26 @@
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { DateTime } from 'luxon';
 import { ICalCalendar, ICalCategory, ICalEvent, ICalEventClass, ICalEventTransparency } from 'ical-generator';
 import { ICalAllDayEvent, ICalBaseData, ICalTimedEvent } from './json-schema-validator';
 
 export const ICAL_PRODUCT_ID = '-//Paqrat76//ical-gen-app//EN';
 export const ICAL_SCALE_GREGORIAN = 'GREGORIAN';
-const DTSTAMP_ISO_OPTIONS = { precision: 'seconds' } as const;
+
+/**
+ * Generates a timestamp in ISO 8601 format without milliseconds.
+ *
+ * The returned string represents the current date and time,
+ * with the milliseconds portion removed, and ends with 'Z'
+ * to indicate UTC.
+ *
+ * @returns {string} A string representation of the current date
+ * and time in ISO 8601 format, excluding milliseconds.
+ */
+function getDtStamp(): string {
+  const now = new Date();
+  now.setMilliseconds(0);
+  return now.toISOString().replace('.000Z', 'Z');
+}
 
 /**
  * Determines if the given event is an all-day event.
@@ -87,7 +101,7 @@ export function generateICalendarObject(sourceData: ICalBaseData): ICalCalendar 
   // Ref: RFC 5545, Sections
   // [3.8.7.2](https://icalendar.org/iCalendar-RFC-5545/3-8-7-2-date-time-stamp.html)
   // [3.3.5](https://icalendar.org/iCalendar-RFC-5545/3-3-5-date-time.html)
-  const dtStamp = DateTime.utc().toISO(DTSTAMP_ISO_OPTIONS);
+  const dtStamp = getDtStamp();
 
   for (const event of sourceData.events) {
     const eventStart = isAllDayEvent(event) ? event.allDayStart : event.start;

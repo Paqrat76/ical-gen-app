@@ -125,7 +125,7 @@ describe('Experimentation Tests', () => {
   });
 
   describe('Event Validation', () => {
-    const filepath = path.join(__dirname, '..');
+    const filepath = path.join(__dirname, '../../');
     let validate: ValidateFunction;
     beforeAll(() => {
       // Use the 'strictTypes: false' option while awaiting PR https://github.com/fastify/fluent-json-schema/pull/280#issue-3198794563

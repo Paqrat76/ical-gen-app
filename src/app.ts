@@ -18,6 +18,7 @@ import { generateICalendarObject } from './ical-generator';
 export interface CliOptions {
   sourceFile: string;
   debug?: boolean;
+  appVersion: string;
 }
 
 /**
@@ -42,6 +43,7 @@ export class ICalGeneratorApp {
   private readonly debugEnabled: boolean;
   private readonly sourceFile: string;
   private readonly outputFile: string;
+  private readonly appVersion: string;
 
   /**
    * Constructor for the ICalGeneratorApp class.
@@ -55,8 +57,9 @@ export class ICalGeneratorApp {
     this.sourceFile = cliOptions.sourceFile;
     this.outputFile = cliOptions.sourceFile.replace(ICalGeneratorApp.SOURCE_EXT, ICalGeneratorApp.TARGET_EXT);
     this.debugEnabled = cliOptions.debug ?? false;
+    this.appVersion = cliOptions.appVersion;
 
-    this.logDebug(`cliOptions:${OS_EOL}${JSON.stringify(cliOptions, null, 2)}`);
+    this.logDebug(this.appVersion, `cliOptions:${OS_EOL}${JSON.stringify(cliOptions, null, 2)}`);
   }
 
   /**
@@ -74,13 +77,13 @@ export class ICalGeneratorApp {
       if (validationFailureMessage) return validationFailureMessage;
 
       const icalCalendarString = this.buildICalendar(sourceJson).toString();
-      this.logDebug(icalCalendarString);
+      this.logDebug(this.appVersion, icalCalendarString);
 
       writeFileSync(this.outputFile, icalCalendarString);
 
       return `Successfully generated the iCalendar file at ${this.outputFile}${OS_EOL}`;
     } catch (e) {
-      throw toError(e, 'ICalGeneratorApp.generate()');
+      throw toError(e, 'ICalGeneratorApp.generate()', this.appVersion);
     }
   }
 
@@ -99,11 +102,11 @@ export class ICalGeneratorApp {
   private validateOrReturnMessage(dataFile: string, json: unknown): string | null {
     const validationResults: ICalValidationResult = validateICalendarJson(json);
     if (validationResults.isValid) {
-      this.logDebug(`JSON data file '${dataFile}' is valid.${OS_EOL}`);
+      this.logDebug(this.appVersion, `JSON data file '${dataFile}' is valid.${OS_EOL}`);
       return null;
     }
 
-    this.logValidationErrors(dataFile, validationResults.errors);
+    this.logValidationErrors(this.appVersion, dataFile, validationResults.errors);
     return `Failed to generate the iCalendar file due to invalid JSON data in '${dataFile}'.${OS_EOL}Please correct the JSON data and try again.${OS_EOL}`;
   }
 
@@ -112,15 +115,17 @@ export class ICalGeneratorApp {
     return generateICalendarObject(sourceJson as ICalBaseData);
   }
 
-  private logValidationErrors(dataFile: string, errors: ErrorObject[] | null | undefined): void {
+  private logValidationErrors(appVersion: string, dataFile: string, errors: ErrorObject[] | null | undefined): void {
     if (errors) {
-      console.error(`JSON schema validation errors in '${dataFile}:${OS_EOL}${JSON.stringify(errors, null, 2)}`);
+      console.error(
+        `JSON schema validation errors in '${dataFile}/${appVersion}:${OS_EOL}${JSON.stringify(errors, null, 2)}'`,
+      );
     }
   }
 
-  private logDebug(message: string): void {
+  private logDebug(appVersion: string, message: string): void {
     if (this.debugEnabled) {
-      console.log(`${OS_EOL}DEBUG::${getDebugSource()} - ${OS_EOL}${message}`);
+      console.log(`${OS_EOL}DEBUG::${getDebugSource()}/${appVersion} - ${OS_EOL}${message}`);
     }
   }
 }

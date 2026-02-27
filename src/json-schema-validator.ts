@@ -1,9 +1,10 @@
+//import { normalize, resolve } from 'node:path';
 import { resolve } from 'node:path';
 import Ajv, { ErrorObject, JSONSchemaType, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { readJsonFile } from './utils';
 
-export const ICAL_SCHEMA_PATH = resolve(__dirname, '../src/schema/ical-gen-app-schema.json');
+export const ICAL_SCHEMA_PATH = resolve(__dirname, '.', 'schema', 'ical-gen-app-schema.json');
 
 export const INVALID_ICAL_TYPE_ERROR_MESSAGE = 'Provided JSON data is not a valid ICalBaseData object.';
 export const INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE =

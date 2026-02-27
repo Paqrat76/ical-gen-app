@@ -14,6 +14,9 @@ Therefore, this generator only supports the most basic features of the iCalendar
   - [RFC 7986](https://www.rfc-editor.org/rfc/rfc7986)
 - [iCalendar (RFC 5545)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/)
   - [iCalendar (RFC 7986)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-7986/)
+- iCalendar Tools
+  - [iCalendar Validator](https://icalendar.org/validator/) - Validate the generated iCalendar (`*.ics`) files
+  - [RRULE Tool](https://icalendar.org/rrule-tool.html) - Generate RRULEs for use in the JSON data file
 
 ### Property Datatypes
 
@@ -34,9 +37,11 @@ Therefore, this generator only supports the most basic features of the iCalendar
 
 ### Calendar Properties (`VCALENDAR`)
 
+**NOTE:** Only lists those properties needed or useful for this project.
+
 - Required Properties
   - (**NOT NEEDED** but include "just in case") scale: TEXT [CALSCALE](https://icalendar.org/iCalendar-RFC-5545/3-7-1-calendar-scale.html)
-    - Fixed value: `CALSCALE:GREGORIAN` (default value)
+    - Fixed value: `GREGORIAN` (default value)
     - Automatically provided by this application
   - (**NOT NEEDED**) version: TEXT [VERSION](https://icalendar.org/iCalendar-RFC-5545/3-7-4-version.html)
     - Fixed value: `VERSION:2.0` (default value)
@@ -44,7 +49,7 @@ Therefore, this generator only supports the most basic features of the iCalendar
   - productID: TEXT [PRODID](https://icalendar.org/iCalendar-RFC-5545/3-7-3-product-identifier.html)
     - Must be globally unique identifier
     - Automatically provided by this application
-    - Use fixed value for this project (maybe `PRODID:-//Paqrat76//ical-gen-app//EN`)
+    - Use fixed value for this project (`--//Paqrat76//ical-gen-app//EN`)
       - By definition, GitHub repository names are globally unique
 
 - Optional Properties
@@ -73,19 +78,19 @@ Therefore, this generator only supports the most basic features of the iCalendar
   - `categories`: TEXT [CATEGORIES](https://icalendar.org/iCalendar-RFC-5545/3-8-1-2-categories.html)
     - Use for grouping events (e.g., US FEDERAL HOLIDAY, HOLIDAY, BIRTHDAY, ANNIVERSARY, OBSERVANCE, etc.)
   - `class`: TEXT [CLASS](https://icalendar.org/iCalendar-RFC-5545/3-8-1-3-classification.html)
-    - Fixed value: `CLASS:PUBLIC`
+    - Fixed value: `PUBLIC`
     - Automatically provided by this application
   - `summary`: TEXT [SUMMARY](https://icalendar.org/iCalendar-RFC-5545/3-8-1-12-summary.html)
-    - Max length: 255 characters
   - `description`: TEXT [DESCRIPTION](https://icalendar.org/iCalendar-RFC-5545/3-8-1-5-description.html)
   - `location`: TEXT [LOCATION](https://icalendar.org/iCalendar-RFC-5545/3-8-1-7-location.html)
   - `transparency`: TEXT [TRANSP](https://icalendar.org/iCalendar-RFC-5545/3-8-2-7-time-transparency.html)
     - Automatically provided by this application-
-    - Fixed value: `TRANSP:TRANSPARENT` for all day events
-    - Fixed value: `TRANSP:OPAQUE` for regular events having a start and end time
-  - `recurrence rule`: RECUR [RRULE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html)
-    - Use [jakubroztocil/rrule](https://www.npmjs.com/package/rrule)
+    - Fixed value: `TRANSPARENT` for all day events
+    - Fixed value: `OPAQUE` for timed events having a start and end time
+  - `recurrenceRule`: RECUR [RRULE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html)
     - Limited support for this property by various calendars
+    - Application user must use the [RRULE Tool](https://icalendar.org/rrule-tool.html) to generate the `RRULE` property
+      - The generated `RRULE` property MUST have `RRULE:` prepended to it.
 
 - Excluded Properties (not supported by multiple calendar implementations (e.g., Google, Proton, etc.))
   - `recurrence date-times`: RDATE [RDATE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-2-recurrence-date-times.html)
@@ -106,25 +111,27 @@ with various iCalendar implementations.
 
 ```json
 {
-  "name": "required calendar name goes here",
-  "description": "optional calendar description goes here",
+  "name": "required calendar name",
+  "description": "optional calendar description",
   "events": [
     {
-      "allDayStart": "required ISO 8601 formatted date string (e.g., 19970714)",
-      "start": "required ISO 8601 formatted UTC datetime string (e.g., 19980119T070000Z)",
-      "end": "required ISO 8601 formatted UTC datetime string (e.g., 19980119T080000Z)",
-      "summary": "required event summary goes here",
-      "description": "optional event description goes here",
+      "allDayStart": "required ISO 8601 formatted date string (e.g., 1997-07-14)",
+      "start": "required ISO 8601 formatted datetime string (e.g., 1998-01-19T07:00:00-04:00)",
+      "end": "required ISO 8601 formatted datetime string (e.g., 1998-01-19T08:00:00-04:00)",
+      "summary": "required event summary",
+      "description": "optional event description",
       "categories": ["optional list of 1 or more categories"],
-      "location": "optional event location goes here",
-      "recurrenceRule": "optional recurrence rule string (e.g., FREQ=DAILY;COUNT=5)",
-      "recurrenceDates": ["optional list of ISO 8601 formatted date/datetime strings"],
-      "exceptionDates": ["optional list of ISO 8601 formatted date/datetime strings"]
+      "location": "optional event location",
+      "recurrenceRule": "optional recurrence rule string (e.g., RRULE:FREQ=DAILY;COUNT=5)"
     }
   ]
 }
 ```
 
-**NOTE:** The `allDayStart` property is used to define the start date of all day events.
-The `start` and `end` properties are used to define the start and end datetime of timed events.
-The `allDayStart` property and the `start` and `end` properties are mutually exclusive!
+### Notes
+
+- The `allDayStart` property is used to define the start date of all day events.
+- The `start` and `end` properties are used to define the start and end datetime of timed events.
+  - The `start` and `end` properties MUST be in ISO 8601 format with timezone offset or `Z` for UTC.
+- The `allDayStart` property and the `start` and `end` properties are mutually exclusive!
+- The `recurrenceRule` property MUST have `RRULE:` prepended to it.

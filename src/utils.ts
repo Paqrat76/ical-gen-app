@@ -77,14 +77,19 @@ export function readJsonFile(filePath: string): unknown {
  *
  * @param {unknown} e - The value to be converted into an `Error`.
  * @param {string} source - The context or source of the error, used for generating descriptive messages.
+ * @param {string} appVersion - The version of this application (${PKG_NAME}@${PKG_VERSION}).
  * @returns {Error} An `Error` object representing the given value, with contextual information.
  */
-export function toError(e: unknown, source: string): Error {
-  if (e instanceof Error) return e;
-
-  if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
-    return new Error(`Error in ${source}: ${JSON.stringify(e, null, 2)}`, { cause: e });
+export function toError(e: unknown, source: string, appVersion: string): Error {
+  const msgPrefix = `Error in ${source}/${appVersion}`;
+  if (e instanceof Error) {
+    e.message = `${msgPrefix}: ${e.message}`;
+    return e;
   }
 
-  return new Error(`Unknown error in ${source}`, { cause: e });
+  if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
+    return new Error(`${msgPrefix}: ${JSON.stringify(e, null, 2)}`, { cause: e });
+  }
+
+  return new Error(`Unknown ${msgPrefix}`, { cause: e });
 }

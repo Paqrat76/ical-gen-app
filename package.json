@@ -1,6 +1,6 @@
 {
   "name": "ical-gen-app",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Consumes JSON containing calendar event data and generates an iCalendar file",
   "keywords": [
     "node",
@@ -27,6 +27,7 @@
   "scripts": {
     "clean": "rm -rf tsconfig.tsbuildinfo dist coverage",
     "build": "tsc",
+    "postbuild": "mkdir dist/schema && cp src/schema/ical-gen-app-schema.json dist/schema/ical-gen-app-schema.json",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "lint:docs": "markdownlint './**/*.md' -i '**/node_modules/**' -i '**/CHANGELOG.md'",
@@ -36,10 +37,15 @@
     "coverage": "jest --coverage",
     "jest:clear": "jest --clearCache",
     "gen:schema": "ts-node tools/create-json-schema.ts > src/schema/ical-gen-app-schema.json",
-    "prepare": "husky"
+    "prepare": "husky",
+    "cli-v": "node dist/cli.js -V",
+    "cli-h": "node dist/cli.js -h",
+    "cli-s": "node dist/cli.js -s ./test/samples/sample-ical-data.json",
+    "cli-sd": "node dist/cli.js -s ./test/samples/sample-ical-data.json -d"
   },
   "overrides": {
-    "minimatch": "10.2.2"
+    "minimatch": "10.2.4",
+    "glob": "13.0.6"
   },
   "dependencies": {
     "@commander-js/extra-typings": "^14.0.0",
@@ -48,16 +54,13 @@
     "commander": "^14.0.3",
     "figlet": "^1.10.0",
     "ical-generator": "^10.0.0",
-    "kleur": "^4.1.5",
-    "luxon": "^3.7.2",
-    "rrule": "^2.8.1"
+    "kleur": "^4.1.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.2.0",
     "@types/jest": "^30.0.0",
-    "@types/luxon": "^3.7.1",
-    "@types/node": "^25.3.1",
+    "@types/node": "^25.3.2",
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.15.0",
@@ -71,6 +74,7 @@
     "lint-staged": "^16.2.7",
     "markdownlint-cli": "^0.47.0",
     "prettier": "^3.8.1",
+    "rrule": "^2.8.1",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
