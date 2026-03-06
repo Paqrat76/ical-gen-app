@@ -7,8 +7,6 @@ import {
 } from '../src/json-schema-validator';
 
 describe('validateICalendarJson', () => {
-  // TODO: Fill out snapshot tests for invalid cases
-
   it('should return valid result for correct iCalendar JSON data for allDay event', () => {
     const validData = {
       name: 'Sample Calendar',
@@ -49,39 +47,6 @@ describe('validateICalendarJson', () => {
     expect(result.errors).toBeUndefined();
   });
 
-  it('should return invalid result for incorrect JSON structure', () => {
-    const invalidData = {
-      name: 'Invalid Calendar',
-      events: 'this should be an array',
-    };
-
-    const result: ICalValidationResult = validateICalendarJson(invalidData);
-
-    expect(result.isValid).toBe(false);
-    expect(result.message).toBe(INVALID_ICAL_TYPE_ERROR_MESSAGE);
-    expect(result.errors).toEqual([INVALID_ICAL_TYPE_ERROR]);
-  });
-
-  it('should return invalid result for JSON not adhering to schema', () => {
-    const invalidSchemaData = {
-      name: 'Invalid Event Calendar',
-      events: [
-        {
-          summary: 'Invalid Event',
-          start: 'invalid-date-format',
-          end: 'invalid-date-format',
-        },
-      ],
-    };
-
-    const result: ICalValidationResult = validateICalendarJson(invalidSchemaData);
-
-    expect(result.isValid).toBe(false);
-    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
-    expect(result.errors).toBeDefined();
-    expect(result.errors).toMatchSnapshot();
-  });
-
   it('should handle completely empty input as invalid', () => {
     let result: ICalValidationResult = validateICalendarJson(null);
     expect(result.isValid).toBe(false);
@@ -100,16 +65,88 @@ describe('validateICalendarJson', () => {
     expect(result.errors).toEqual([INVALID_ICAL_TYPE_ERROR]);
   });
 
+  it('should return invalid result for incorrect JSON structure for events', () => {
+    const invalidEventType = {
+      name: 'Invalid Event Type',
+      events: 'this should be an array',
+    };
+    let result: ICalValidationResult = validateICalendarJson(invalidEventType);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_TYPE_ERROR_MESSAGE);
+    expect(result.errors).toEqual([INVALID_ICAL_TYPE_ERROR]);
+
+    const expectedError = {
+      instancePath: '/events',
+      keyword: 'minItems',
+      message: 'must NOT have fewer than 1 items',
+      params: {
+        limit: 1,
+      },
+      schemaPath: '#/properties/events/minItems',
+    };
+    const emptyEventArray = {
+      name: 'Empty Event Array',
+      events: [],
+    };
+    result = validateICalendarJson(emptyEventArray);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.errors).toEqual([expectedError]);
+  });
+
+  it('should return invalid result for invalid date/datetime formats', () => {
+    const invalidAllDayEvent = {
+      name: 'Invalid Event Calendar',
+      events: [
+        {
+          summary: 'Invalid AllDay Event',
+          allDayStart: 'invalid-date-format',
+        },
+      ],
+    };
+    let result: ICalValidationResult = validateICalendarJson(invalidAllDayEvent);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchSnapshot();
+
+    const invalidTimedEvent = {
+      name: 'Invalid Event Calendar',
+      events: [
+        {
+          summary: 'Invalid Timed Event',
+          start: 'invalid-datetime-format',
+          end: 'invalid-datetime-format',
+        },
+      ],
+    };
+    result = validateICalendarJson(invalidTimedEvent);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchSnapshot();
+  });
+
   it('should handle missing required fields as invalid', () => {
     const missingFieldsData = {
-      name: 'Missing required events',
-      events: [],
+      description: 'Missing calendar name and required event summary',
+      events: [
+        {
+          description: 'Missing all day event summary',
+          allDayStart: '2026-02-23',
+        },
+        {
+          description: 'Missing timed event summary',
+          start: '2026-02-23T10:30:00.123-04:00',
+          end: '2026-02-23T11:15:00.456-04:00',
+        },
+      ],
     };
 
     const result: ICalValidationResult = validateICalendarJson(missingFieldsData);
 
     expect(result.isValid).toBe(false);
-    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.message).toBe(INVALID_ICAL_TYPE_ERROR_MESSAGE);
     expect(result.errors).toBeDefined();
     expect(result.errors).toMatchSnapshot();
   });

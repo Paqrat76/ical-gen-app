@@ -59,3 +59,6 @@ dist
 
 # NPM
 .npmrc
+
+# Personal
+**/test/samples/paq*.*

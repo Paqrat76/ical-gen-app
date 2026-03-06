@@ -30,9 +30,9 @@ export default {
   },
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
-    '!<rootDir>/src/**/index.ts',
+    '!<rootDir>/src/cli.ts',
+    '!<rootDir>/src/index.ts',
     '!<rootDir>/test/**',
-    '!<rootDir>/lib/**',
   ],
   coverageThreshold: {
     global: {

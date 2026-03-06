@@ -1,9 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { existsSync, writeFileSync } from 'node:fs';
-import * as path from 'node:path';
+import { writeFileSync } from 'node:fs';
 import { ErrorObject } from 'ajv';
 import { ICalCalendar } from 'ical-generator';
-import { OS_EOL, getDebugSource, readJsonFile, toError } from './utils';
+import { getDebugSource, OS_EOL, readJsonFile, toError, verifyJsonFilePath } from './utils';
 import { ICalBaseData, ICalValidationResult, validateICalendarJson } from './json-schema-validator';
 import { generateICalendarObject } from './ical-generator';
 
@@ -37,7 +36,7 @@ export interface CliOptions {
  * results to disk.
  */
 export class ICalGeneratorApp {
-  private static readonly SOURCE_EXT = '.json';
+  private static readonly REGEX_JSON_EXT = /\.json$/i;
   private static readonly TARGET_EXT = '.ics';
 
   private readonly debugEnabled: boolean;
@@ -46,16 +45,22 @@ export class ICalGeneratorApp {
   private readonly appVersion: string;
 
   /**
-   * Constructor for the ICalGeneratorApp class.
+   * Constructs an instance of the application with the given CLI options.
    *
-   * @param {CliOptions} cliOptions - The command-line options used for initializing the instance.
+   * @param {CliOptions} cliOptions - The options provided through the command-line interface. Must include:
+   *   - `sourceFile`: The file path to the source JSON file. It will be validated.
+   *   - `debug` (optional): A boolean indicating whether debug mode is enabled. Defaults to `false`.
+   *   - `appVersion`: The version of the application.
    * @returns {ICalGeneratorApp} An instance of the ICalGeneratorApp class.
    */
   constructor(cliOptions: CliOptions) {
-    this.assertValidCliOptions(cliOptions);
+    assert.ok(cliOptions, 'cliOptions is required');
+    assert.ok(JSON.stringify(cliOptions) !== '{}', 'cliOptions is required');
+    assert.ok(cliOptions.sourceFile, 'cliOptions.sourceFile is required');
+    assert.ok(cliOptions.appVersion, 'cliOptions.appVersion is required');
 
-    this.sourceFile = cliOptions.sourceFile;
-    this.outputFile = cliOptions.sourceFile.replace(ICalGeneratorApp.SOURCE_EXT, ICalGeneratorApp.TARGET_EXT);
+    this.sourceFile = verifyJsonFilePath('sourceFile', cliOptions.sourceFile);
+    this.outputFile = this.sourceFile.replace(ICalGeneratorApp.REGEX_JSON_EXT, ICalGeneratorApp.TARGET_EXT);
     this.debugEnabled = cliOptions.debug ?? false;
     this.appVersion = cliOptions.appVersion;
 
@@ -83,20 +88,9 @@ export class ICalGeneratorApp {
 
       return `Successfully generated the iCalendar file at ${this.outputFile}${OS_EOL}`;
     } catch (e) {
+      /* istanbul ignore next */
       throw toError(e, 'ICalGeneratorApp.generate()', this.appVersion);
     }
-  }
-
-  private assertValidCliOptions(cliOptions: CliOptions): void {
-    assert.ok(cliOptions, 'cliOptions is required');
-    assert.ok(cliOptions.sourceFile, 'sourceFile is required');
-    assert.ok(existsSync(cliOptions.sourceFile), `sourceFile does not exist: ${cliOptions.sourceFile}`);
-
-    const ext = path.extname(cliOptions.sourceFile).toLowerCase();
-    assert.ok(
-      ext === ICalGeneratorApp.SOURCE_EXT,
-      `sourceFile does not have a '${ICalGeneratorApp.SOURCE_EXT}' extension: ${path.posix.basename(cliOptions.sourceFile)}`,
-    );
   }
 
   private validateOrReturnMessage(dataFile: string, json: unknown): string | null {
@@ -116,6 +110,7 @@ export class ICalGeneratorApp {
   }
 
   private logValidationErrors(appVersion: string, dataFile: string, errors: ErrorObject[] | null | undefined): void {
+    /* istanbul ignore else */
     if (errors) {
       console.error(
         `JSON schema validation errors in '${dataFile}/${appVersion}:${OS_EOL}${JSON.stringify(errors, null, 2)}'`,
@@ -124,8 +119,9 @@ export class ICalGeneratorApp {
   }
 
   private logDebug(appVersion: string, message: string): void {
+    /* istanbul ignore else */
     if (this.debugEnabled) {
-      console.log(`${OS_EOL}DEBUG::${getDebugSource()}/${appVersion} - ${OS_EOL}${message}`);
+      console.log(`${OS_EOL}DEBUG:: ${appVersion}/${getDebugSource()} - ${OS_EOL}${message}`);
     }
   }
 }

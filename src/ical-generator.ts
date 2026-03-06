@@ -80,6 +80,10 @@ function applyEventTiming(icalEvent: ICalEvent, event: ICalAllDayEvent | ICalTim
 /**
  * Generates an iCalendar object based on the provided source data.
  *
+ * Assumption: The source data is expected to be a valid JSON object conforming to the iCalendar schema.
+ * In the application flow, the JSON data is validated before being passed to this function and exits beforehand
+ * if invalid.
+ *
  * @param {ICalBaseData} sourceData - The JSON object containing iCalendar data.
  * It includes properties like the calendar name, description, and a collection of events.
  *

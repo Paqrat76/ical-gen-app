@@ -3,18 +3,59 @@
 exports[`validateICalendarJson should handle missing required fields as invalid 1`] = `
 [
   {
-    "instancePath": "/events",
-    "keyword": "minItems",
-    "message": "must NOT have fewer than 1 items",
+    "instancePath": "$",
+    "keyword": "type",
+    "message": "Provided JSON data is not a valid ICalBaseData object.",
     "params": {
-      "limit": 1,
+      "type": "ICalBaseData",
     },
-    "schemaPath": "#/properties/events/minItems",
+    "schemaPath": "$",
   },
 ]
 `;
 
-exports[`validateICalendarJson should return invalid result for JSON not adhering to schema 1`] = `
+exports[`validateICalendarJson should return invalid result for invalid date/datetime formats 1`] = `
+[
+  {
+    "instancePath": "/events/0/allDayStart",
+    "keyword": "format",
+    "message": "must match format "date"",
+    "params": {
+      "format": "date",
+    },
+    "schemaPath": "#/definitions/allDayEvent/properties/allDayStart/format",
+  },
+  {
+    "instancePath": "/events/0",
+    "keyword": "required",
+    "message": "must have required property 'start'",
+    "params": {
+      "missingProperty": "start",
+    },
+    "schemaPath": "#/definitions/timedEvent/required",
+  },
+  {
+    "instancePath": "/events/0",
+    "keyword": "required",
+    "message": "must have required property 'end'",
+    "params": {
+      "missingProperty": "end",
+    },
+    "schemaPath": "#/definitions/timedEvent/required",
+  },
+  {
+    "instancePath": "/events/0",
+    "keyword": "oneOf",
+    "message": "must match exactly one schema in oneOf",
+    "params": {
+      "passingSchemas": null,
+    },
+    "schemaPath": "#/oneOf",
+  },
+]
+`;
+
+exports[`validateICalendarJson should return invalid result for invalid date/datetime formats 2`] = `
 [
   {
     "instancePath": "/events/0",

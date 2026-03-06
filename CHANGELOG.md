@@ -21,6 +21,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-03-06
+
+### Added
+
+- `util.ts`: `function verifyJsonFilePath()` for a more rigorous JSON file path validation
+- `util.ts`: `function describeUnknownError()` for a more rigorous error handling
+
+### Changed
+
+- Updated development dependencies
+- Updated Jest configuration
+- Updated unit tests to achieve desired coverage
+- `util.ts`: Refactored utility functions based on selected AI suggestions
+- `app.ts`: Refactored `ICalGeneratorApp` using the new and refactored utility functions
+
+### Removed
+
+- package.json `overrides` section to resolve Jest coverage issue while maintaining security
+
+
 ## [0.4.0] - 2026-02-27
 
 ### Added

@@ -1,0 +1,20 @@
+{
+  "name": "Invalid Calendar",
+  "description": "Invalid Calendar Description",
+  "events": [
+    {
+      "summary": "All Day Event"
+    },
+    {
+      "allDayStart": "2026-07-04"
+    },
+    {
+      "summary": "Timed Event",
+      "end": "2026-03-15T20:00:00-04:00"
+    },
+    {
+      "summary": "Recurring Timed Event",
+      "start": "2026-03-15T18:00:00-04:00"
+    }
+  ]
+}
