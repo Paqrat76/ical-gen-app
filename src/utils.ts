@@ -1,11 +1,13 @@
-import { strict as assert } from 'node:assert';
 import os from 'node:os';
-import { readFileSync } from 'node:fs';
-import { extname } from 'node:path';
+import { accessSync, constants, readFileSync, statSync } from 'node:fs';
+import { extname, normalize, resolve } from 'node:path';
+import { inspect } from 'node:util';
 
 export const OS_EOL = os.EOL;
 
-/* istanbul ignore next - unnecessary to unit test */
+const REGEX_STACK_TRACE_EOL = /\r?\n/;
+const REGEX_STACK_TRACE_LINE = /at\s+(.+)\s+(.+)/;
+
 /**
  * Extract method name using the Error.stack.
  *
@@ -17,47 +19,98 @@ export function getDebugSource(): string {
   //       precise content of the stack string due to implementation inconsistencies, but you
   //       can generally assume it exists and use it for debugging purposes.
   // Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack
-  // Node implementation: https://nodejs.org/docs/latest-v24.x/api/errors.html#errorstack
   // ================================================================
+  // Node implementation: https://nodejs.org/docs/latest-v24.x/api/errors.html#errorstack (V8 JavaScript engine)
   // Casual observations indicate the following (from Linux OS):
+  // ASSUMPTION: Purely anonymous functions ARE NOT included in this application.
   // stack trace:
-  // - line 0 - "Error ..."
-  // - line 1 - getDebugSource()
-  // - line 2 - logDebug(...)
-  // - line 3 - method where logDebug(...) is called
+  // - line 0 - "Error:"
+  // - line 1 - "at getDebugSource (<file path>:line:column)"
+  // - line 2 - "at <class name>.logDebug (<file path>:line:column)"
+  // - line 3 - "at <method where logDebug(...) is called> (<file path>:line:column)"
   // - line 4 ...
-  // or
-  // - line 0 - "Error ..."
-  // - line 1 - getDebugSource()
-  // - line 2 - logDebug(...)
-  // - line 3 - <full path of source file> for an anonymous function
-  // - line 4 - (<anonymous>) function
-  // - line 5 - method where logDebug(...) is called
-  // - line 6 ...
   // ================================================================
-  // @ts-expect-error: `stack` is a property of `Error``
-  const stackLines = new Error().stack.split(OS_EOL);
+  // Unknown, therefore, return an empty string since any "default" value would be meaningless
+  const DEFAULT_RETURN_VALUE = '';
+  // Create a new Error object to get the current stack trace
+  const stackTrace = new Error().stack;
+  // In the Node/V8 JavaScript engine, stacktrace should have data, but just in case...
+  if (!stackTrace || stackTrace.length === 0) return DEFAULT_RETURN_VALUE;
+  const stackLines: string[] = stackTrace.split(REGEX_STACK_TRACE_EOL);
   if (stackLines.length >= 4) {
-    // @ts-expect-error: `stackLines[3]` is a string
-    let stackLine: string = stackLines[3];
-    for (let i = 3; i < stackLines.length; i++) {
-      // @ts-expect-error: `stackLines[i]` is a string
-      if (!stackLines[i].includes('(<anonymous>)') && stackLines[i].includes('(')) {
-        // @ts-expect-error: `stackLines[i]` is a string
-        stackLine = stackLines[i].trim();
-        break;
-      }
-    }
-    // Extract <source> ignoring the rest of the line: "at <source> (<full path of source file>)"
-    const endLine = stackLine.indexOf('(') - 1;
-    return stackLine.substring(3, endLine);
+    const stackLine = stackLines[3]?.trim();
+    if (!stackLine) return DEFAULT_RETURN_VALUE;
+    const regexResult = REGEX_STACK_TRACE_LINE.exec(stackLine);
+    return regexResult?.[1] ?? DEFAULT_RETURN_VALUE;
   } else {
-    // Unknown, therefore, return an empty string since any "default" value would be meaningless
-    return '';
+    return DEFAULT_RETURN_VALUE;
   }
 }
 
-/* istanbul ignore next - unnecessary to unit test */
+/**
+ * Verifies that the provided file path points to an existing, readable JSON file. Performs validation and normalization of the file path.
+ *
+ * @param {string} propertyName - The name of the property being validated, to use in error messages.
+ * @param {string} filePath - The file path to validate, normalize, and check for existence and readability.
+ * @returns {string} The absolute, normalized file path if it passes all validation checks.
+ * @throws {Error} If validation fails.
+ */
+export function verifyJsonFilePath(propertyName: string, filePath: string): string {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (propertyName === undefined || propertyName === null) {
+    throw new Error(`propertyName is required.`);
+  }
+  if (!propertyName.trim()) {
+    throw new Error(`propertyName is required.`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (filePath === undefined || filePath === null) {
+    throw new Error(`${propertyName} is required.`);
+  }
+  const candidate = filePath.trim();
+  if (!candidate) {
+    throw new Error(`${propertyName} is required.`);
+  }
+
+  // Normalize and make absolute in one deterministic step.
+  const verifiedFilePath = resolve(normalize(candidate));
+
+  // Validate extension first.
+  if (extname(verifiedFilePath).toLowerCase() !== '.json') {
+    throw new Error(`${propertyName} (${verifiedFilePath}) does not have a '.json' extension.`);
+  }
+
+  let fsStats;
+  try {
+    fsStats = statSync(verifiedFilePath, { throwIfNoEntry: false });
+  } catch (err: unknown) {
+    // Unlikely error, but handle just-in-case
+    /* istanbul ignore next */
+    const message = err instanceof Error ? err.message : String(err);
+    /* istanbul ignore next */
+    throw new Error(`Unable to inspect ${propertyName} (${verifiedFilePath}): ${message}`, { cause: err });
+  }
+
+  if (!fsStats) {
+    throw new Error(`${propertyName} (${verifiedFilePath}) does not exist.`);
+  }
+
+  if (!fsStats.isFile()) {
+    throw new Error(`${propertyName} (${verifiedFilePath}) is not a file.`);
+  }
+
+  // Ensure the file is readable by the current process.
+  try {
+    accessSync(verifiedFilePath, constants.R_OK);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`${propertyName} (${verifiedFilePath}) is not readable: ${message}`, { cause: err });
+  }
+
+  return verifiedFilePath;
+}
+
 /**
  * Reads and parses a JSON file from the specified file path.
  *
@@ -65,13 +118,27 @@ export function getDebugSource(): string {
  * @returns {unknown} The parsed content of the JSON file.
  */
 export function readJsonFile(filePath: string): unknown {
-  assert.ok(filePath, 'filePath is required.');
-  assert.ok(extname(filePath).toLowerCase() === '.json', `filePath does not have a '.json' extension.`);
-  const content = readFileSync(filePath, 'utf8');
-  return JSON.parse(content);
+  const verifiedFilePath = verifyJsonFilePath('filePath', filePath);
+
+  let content: string;
+  try {
+    content = readFileSync(verifiedFilePath, 'utf8');
+  } catch (err: unknown) {
+    // Unlikely error, but handle just-in-case
+    /* istanbul ignore next */
+    const message = err instanceof Error ? err.message : String(err);
+    /* istanbul ignore next */
+    throw new Error(`Failed to read JSON file (${verifiedFilePath}): ${message}`, { cause: err });
+  }
+
+  try {
+    return JSON.parse(content);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Invalid JSON in file (${verifiedFilePath}): ${message}`, { cause: err });
+  }
 }
 
-/* istanbul ignore next - unnecessary to unit test */
 /**
  * Converts a given value into an `Error` object, providing contextual information about the source.
  *
@@ -81,15 +148,57 @@ export function readJsonFile(filePath: string): unknown {
  * @returns {Error} An `Error` object representing the given value, with contextual information.
  */
 export function toError(e: unknown, source: string, appVersion: string): Error {
-  const msgPrefix = `Error in ${source}/${appVersion}`;
+  const msgPrefix = `Error in ${appVersion}/${source}`;
+
   if (e instanceof Error) {
-    e.message = `${msgPrefix}: ${e.message}`;
-    return e;
+    return new Error(`${msgPrefix}: ${e.message}`, { cause: e });
   }
 
-  if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
-    return new Error(`${msgPrefix}: ${JSON.stringify(e, null, 2)}`, { cause: e });
+  return new Error(`${msgPrefix}: ${describeUnknownError(e)}`, { cause: e });
+}
+
+/**
+ * Describes an unknown error value by converting it into a readable string representation.
+ *
+ * @param {unknown} value - The value to be described, which may be of any type.
+ * @returns {string} A string representation of the input value. This can include primitive values, formatted objects,
+ *                  or special indicators for null, undefined, and functions.
+ * @private
+ */
+function describeUnknownError(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') return String(value);
+  if (typeof value === 'symbol') return value.toString();
+  if (typeof value === 'function') return `[function ${value.name || '<anonymous>'}]`;
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+
+  // Errors stringify poorly with JSON.stringify (often "{}"), so format them explicitly.
+  // Not expected, but just in case..
+  /* istanbul ignore next */
+  if (value instanceof Error) {
+    return `${value.name}: ${value.message}`;
   }
 
-  return new Error(`Unknown ${msgPrefix}`, { cause: e });
+  // Node-friendly, safe formatting for objects/arrays/maps/sets/circular refs/etc.
+  try {
+    const text = inspect(value, {
+      depth: 3,
+      maxArrayLength: 50,
+      breakLength: 120,
+      compact: false,
+      getters: true,
+    });
+
+    const MAX_LEN = 10_000;
+    return text.length > MAX_LEN ? `${text.slice(0, MAX_LEN)}… <truncated>` : text;
+  } catch {
+    // Extremely defensive fallback
+    /* istanbul ignore next */
+    try {
+      return Object.prototype.toString.call(value);
+    } catch {
+      return '<unprintable value>';
+    }
+  }
 }

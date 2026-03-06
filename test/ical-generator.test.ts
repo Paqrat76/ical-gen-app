@@ -3,8 +3,6 @@ import { generateICalendarObject, ICAL_PRODUCT_ID, ICAL_SCALE_GREGORIAN } from '
 import { ICalBaseData } from '../src/json-schema-validator';
 
 describe('generateICalendarObject', () => {
-  // TODO: Fill out test cases for all properties of ICalBaseData
-
   // NOTE: The empty 'events' array is allowed here because the JSON schema validation is carried out before calling
   // generateICalendarObject(...).
 
@@ -45,7 +43,96 @@ describe('generateICalendarObject', () => {
     expect(calendar.description()).toBeNull();
   });
 
-  it('should add timed-events to the iCalendar object correctly', () => {
+  it('should generate a minimal iCalendar object with an all day event', () => {
+    const sourceData: ICalBaseData = {
+      name: 'All-Day Event Calendar',
+      events: [
+        {
+          allDayStart: '2026-02-24',
+          summary: 'All-Day Test Event',
+        },
+      ],
+    };
+
+    const calendar = generateICalendarObject(sourceData);
+
+    expect(calendar.events().length).toBe(1);
+
+    const event = calendar.events()[0];
+    expect(event).toBeDefined();
+    expect(event?.allDay()).toBe(true);
+    expect(event?.class()).toStrictEqual(FIXED_CLASS);
+    expect(event?.id()).toMatch(REGEX_ID);
+    expect(event?.stamp()).toMatch(REGEX_STAMP);
+    expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_TRANSPARENT);
+    expect(event?.start()).toStrictEqual('2026-02-24');
+    expect(event?.summary()).toStrictEqual('All-Day Test Event');
+  });
+
+  it('should generate a full iCalendar object with an all day event', () => {
+    const sourceData: ICalBaseData = {
+      name: 'All-Day Event Calendar',
+      description: 'This is a test calendar',
+      events: [
+        {
+          summary: 'All-Day Test Event',
+          description: 'Sample one time all day event description',
+          allDayStart: '2026-02-24',
+          categories: ['Category'],
+          location: 'Sample Location, 123 Main St, Anytown, USA',
+          recurrenceRule: 'RRULE:FREQ=YEARLY;COUNT=10',
+        },
+      ],
+    };
+
+    const calendar = generateICalendarObject(sourceData);
+    expect(calendar).toBeDefined();
+    expect(calendar.name()).toStrictEqual('All-Day Event Calendar');
+    expect(calendar.description()).toStrictEqual('This is a test calendar');
+    expect(calendar.prodId()).toStrictEqual('-//Paqrat76//ical-gen-app//EN');
+    expect(calendar.scale()).toStrictEqual('GREGORIAN');
+    // Expected unused properties:
+    expect(calendar.method()).toBeNull();
+    expect(calendar.source()).toBeNull();
+    expect(calendar.timezone()).toBeNull();
+    expect(calendar.ttl()).toBeNull();
+    expect(calendar.url()).toBeNull();
+    expect(calendar.x()).toStrictEqual([]);
+
+    expect(calendar.events().length).toBe(1);
+    const event = calendar.events()[0];
+    expect(event).toBeDefined();
+    expect(event?.allDay()).toBe(true);
+    expect(JSON.stringify(event?.categories())).toStrictEqual(JSON.stringify([{ name: 'Category' }]));
+    expect(event?.class()).toStrictEqual(FIXED_CLASS);
+    expect(event?.description()).toStrictEqual({ plain: 'Sample one time all day event description' });
+    expect(event?.id()).toMatch(REGEX_ID);
+    expect(event?.location()).toStrictEqual({ title: 'Sample Location, 123 Main St, Anytown, USA' });
+    expect(event?.repeating()).toStrictEqual('RRULE:FREQ=YEARLY;COUNT=10');
+    expect(event?.stamp()).toMatch(REGEX_STAMP);
+    expect(event?.start()).toStrictEqual('2026-02-24');
+    expect(event?.summary()).toStrictEqual('All-Day Test Event');
+    expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_TRANSPARENT);
+    // Expected unused properties:
+    expect(event?.alarms()).toStrictEqual([]);
+    expect(event?.attachments()).toStrictEqual([]);
+    expect(event?.attendees()).toStrictEqual([]);
+    expect(event?.busystatus()).toBeNull();
+    expect(event?.created()).toBeNull();
+    expect(event?.end()).toBeNull();
+    expect(event?.floating()).toBe(false);
+    expect(event?.lastModified()).toBeNull();
+    expect(event?.organizer()).toBeNull();
+    expect(event?.priority()).toBeNull();
+    expect(event?.recurrenceId()).toBeNull();
+    expect(event?.sequence()).toStrictEqual(0);
+    expect(event?.status()).toBeNull();
+    expect(event?.timezone()).toBeNull();
+    expect(event?.url()).toBeNull();
+    expect(event?.x()).toStrictEqual([]);
+  });
+
+  it('should generate a minimal iCalendar object with a timed event', () => {
     const sourceData: ICalBaseData = {
       name: 'Eventful Calendar',
       events: [
@@ -72,30 +159,64 @@ describe('generateICalendarObject', () => {
     expect(event?.summary()).toStrictEqual('Test Event');
   });
 
-  it('should add all-day events to the iCalendar object correctly', () => {
+  it('should generate a full iCalendar object with a timed event', () => {
     const sourceData: ICalBaseData = {
-      name: 'All-Day Event Calendar',
+      name: 'Eventful Calendar',
+      description: 'This is a test calendar',
       events: [
         {
-          allDayStart: '2026-02-24',
-          summary: 'All-Day Test Event',
+          summary: 'Timed Test Event',
+          description: 'Sample one time timed event description',
+          start: '2026-02-24T10:00:00-04:00',
+          end: '2026-02-24T11:00:00-04:00',
+          categories: ['Category'],
+          location: 'Sample Location, 123 Main St, Anytown, USA',
+          recurrenceRule: 'RRULE:FREQ=YEARLY;COUNT=10',
         },
       ],
     };
 
     const calendar = generateICalendarObject(sourceData);
+    expect(calendar).toBeDefined();
+    expect(calendar.name()).toStrictEqual('Eventful Calendar');
+    expect(calendar.description()).toStrictEqual('This is a test calendar');
+    expect(calendar.prodId()).toStrictEqual('-//Paqrat76//ical-gen-app//EN');
+    expect(calendar.scale()).toStrictEqual('GREGORIAN');
+    // Expected unused properties:
+    expect(calendar.method()).toBeNull();
+    expect(calendar.source()).toBeNull();
+    expect(calendar.timezone()).toBeNull();
+    expect(calendar.ttl()).toBeNull();
+    expect(calendar.url()).toBeNull();
+    expect(calendar.x()).toStrictEqual([]);
 
     expect(calendar.events().length).toBe(1);
-
     const event = calendar.events()[0];
     expect(event).toBeDefined();
-    expect(event?.allDay()).toBe(true);
+    expect(event?.allDay()).toBe(false);
     expect(event?.class()).toStrictEqual(FIXED_CLASS);
     expect(event?.id()).toMatch(REGEX_ID);
     expect(event?.stamp()).toMatch(REGEX_STAMP);
-    expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_TRANSPARENT);
-    expect(event?.start()).toStrictEqual('2026-02-24');
-    expect(event?.summary()).toStrictEqual('All-Day Test Event');
+    expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_OPAQUE);
+    expect(event?.start()).toStrictEqual('2026-02-24T10:00:00-04:00');
+    expect(event?.end()).toStrictEqual('2026-02-24T11:00:00-04:00');
+    expect(event?.summary()).toStrictEqual('Timed Test Event');
+    // Expected unused properties:
+    expect(event?.alarms()).toStrictEqual([]);
+    expect(event?.attachments()).toStrictEqual([]);
+    expect(event?.attendees()).toStrictEqual([]);
+    expect(event?.busystatus()).toBeNull();
+    expect(event?.created()).toBeNull();
+    expect(event?.floating()).toBe(false);
+    expect(event?.lastModified()).toBeNull();
+    expect(event?.organizer()).toBeNull();
+    expect(event?.priority()).toBeNull();
+    expect(event?.recurrenceId()).toBeNull();
+    expect(event?.sequence()).toStrictEqual(0);
+    expect(event?.status()).toBeNull();
+    expect(event?.timezone()).toBeNull();
+    expect(event?.url()).toBeNull();
+    expect(event?.x()).toStrictEqual([]);
   });
 
   it('should throw an error if sourceData is not provided', () => {
