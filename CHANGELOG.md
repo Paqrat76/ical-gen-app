@@ -21,6 +21,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2026-03-07
+
+### Added
+
+- Support for event notifications/alarms in the iCalendar data model
+- Documentation links in CLI help output for the user guide and JSON schema documentation
+
+### Changed
+
+- Updated event schema/types to use `notifications` for event reminders
+- Updated README.md dependency notes to include alarm support in `ical-generator`
+- Updated development dependencies
+
+### Removed
+
+- `recurrenceDates` and `exceptionDates` from the base event schema/types
+- Obsolete generated sample file `test/samples/sample-ical-data.ics`
+
+### Fixed
+
+- Replaced placeholder CLI help text with actual project documentation references
+
+
 ## [0.5.0] - 2026-03-06
 
 ### Added

@@ -9,6 +9,39 @@ const REGEX_STACK_TRACE_EOL = /\r?\n/;
 const REGEX_STACK_TRACE_LINE = /at\s+(.+)\s+(.+)/;
 
 /**
+ * A unique symbol used as a brand to signify a non-empty string type.
+ * This is used for type refinement, ensuring that a string value is guaranteed
+ * to be non-empty. The presence of this brand in a type indicates that additional
+ * validations or guarantees are in place to enforce the non-empty constraint.
+ */
+declare const nonEmptyStringBrand: unique symbol;
+/**
+ * Represents a string value guaranteed to be non-empty.
+ *
+ * This type provides a stricter constraint on standard string types, ensuring
+ * that the value is not an empty string (""). It is a branded type, meaning
+ * that it uses a unique internal marker (`nonEmptyStringBrand`) to distinguish
+ * it from regular strings at the type level. This allows developers to work
+ * with non-empty strings explicitly while maintaining type safety.
+ *
+ * NonEmptyString should typically be created or validated through specific
+ * utility functions or runtime checks to ensure the non-empty requirement is met.
+ *
+ * Note: At runtime, this type behaves like a standard string and does not enforce
+ * its non-emptiness constraint without explicit checks.
+ */
+export type NonEmptyString = string & { [nonEmptyStringBrand]: 'NonEmptyString' };
+/**
+ * Checks if the given input is a non-empty string.
+ *
+ * @param input - The value to be checked, which can be a string, undefined, or null.
+ * @returns A boolean indicating whether the input is a non-empty string.
+ */
+export function isNonEmptyString(input: string | undefined | null): input is NonEmptyString {
+  return input ? input.length > 0 : false;
+}
+
+/**
  * Extract method name using the Error.stack.
  *
  * @returns Method name or empty string if unknown

@@ -10,12 +10,19 @@ describe('ICalGeneratorApp', () => {
 
   describe('constructor', () => {
     it('should initialize with valid CLI options', () => {
-      const cliOptions: CliOptions = {
+      let cliOptions: CliOptions = {
         appVersion: APP_VERSION,
         sourceFile: './test/samples/sample-ical-data.json',
         debug: true,
       };
-      const app = new ICalGeneratorApp(cliOptions);
+      let app = new ICalGeneratorApp(cliOptions);
+      expect(app).toBeInstanceOf(ICalGeneratorApp);
+
+      cliOptions = {
+        appVersion: APP_VERSION,
+        sourceFile: './test/samples/sample-ical-data.json',
+      };
+      app = new ICalGeneratorApp(cliOptions);
       expect(app).toBeInstanceOf(ICalGeneratorApp);
     });
 

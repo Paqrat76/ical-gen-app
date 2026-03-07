@@ -1,6 +1,36 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "notification": {
+      "type": "object",
+      "properties": {
+        "trigger": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "minute",
+            "hour",
+            "day",
+            "week"
+          ]
+        },
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "trigger",
+        "unit"
+      ]
+    },
     "allDayEvent": {
       "type": "object",
       "properties": {
@@ -54,6 +84,13 @@
         },
         "location": {
           "type": "string"
+        },
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/notification"
+          },
+          "minItems": 1
         },
         "recurrenceRule": {
           "type": "string",

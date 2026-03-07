@@ -95,6 +95,8 @@ main();
 function createCliCommand(): Command {
   const program = new Command();
 
+  const docs = `${OS_EOL}User Guide: ./docs/user-guide.md${OS_EOL}JSON Schema Documentation: ./docs/schema-documentation.md${OS_EOL}`;
+
   program
     .name(CLI_NAME)
     .description(PKG_DESCRIPTION)
@@ -105,8 +107,7 @@ function createCliCommand(): Command {
       helpWidth: 80,
     })
     .addHelpText('beforeAll', cyan(`${APP_VERSION}${OS_EOL}`))
-    // TODO: Add link(s) to documentation once it has been created and published.
-    .addHelpText('afterAll', cyan(`${OS_EOL}Add link to documentation here...${OS_EOL}`))
+    .addHelpText('afterAll', cyan(docs))
     .configureOutput({
       // Highlight errors in color.
       outputError: (str, write) => {
