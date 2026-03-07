@@ -91,6 +91,13 @@ Therefore, this generator only supports the most basic features of the iCalendar
     - Limited support for this property by various calendars
     - Application user must use the [RRULE Tool](https://icalendar.org/rrule-tool.html) to generate the `RRULE` property
       - The generated `RRULE` property MUST have `RRULE:` prepended to it.
+  - `alarm`: VALARM [VALARM](https://icalendar.org/iCalendar-RFC-5545/3-8-6-alarm-component-properties.html)
+    - `action`: [ACTION](https://icalendar.org/iCalendar-RFC-5545/3-8-6-1-action.html)
+      - actionvalue = "AUDIO" / "DISPLAY" / "EMAIL"
+    - `repeatCount`: [REPEAT](https://icalendar.org/iCalendar-RFC-5545/3-8-6-2-repeat-count.html)
+      - This property defines the number of times the alarm should be repeated, after the initial trigger.
+    - `trigger`: [TRIGGER](https://icalendar.org/iCalendar-RFC-5545/3-8-6-3-trigger.html)
+      - This property specifies when an alarm will trigger. Can be duration or date-time.
 
 - Excluded Properties (not supported by multiple calendar implementations (e.g., Google, Proton, etc.))
   - `recurrence date-times`: RDATE [RDATE](https://icalendar.org/iCalendar-RFC-5545/3-8-5-2-recurrence-date-times.html)
@@ -122,7 +129,56 @@ with various iCalendar implementations.
       "description": "optional event description",
       "categories": ["optional list of 1 or more categories"],
       "location": "optional event location",
-      "recurrenceRule": "optional recurrence rule string (e.g., RRULE:FREQ=DAILY;COUNT=5)"
+      "recurrenceRule": "optional recurrence rule string (e.g., RRULE:FREQ=DAILY;COUNT=5)",
+      "notifications": [
+        "optional list of 1 or more triggers as a duration in minutes | days | weeks before the event start"
+      ]
+    }
+  ]
+}
+```
+
+### Example JSON
+
+```json
+{
+  "name": "Sample Calendar",
+  "description": "Sample Calendar Description",
+  "events": [
+    {
+      "summary": "All Day Event",
+      "description": "Sample one time all day event description",
+      "allDayStart": "2026-11-11",
+      "categories": ["Category"],
+      "location": "Sample Location, 123 Main St, Anytown, USA",
+      "notifications": [
+        { "trigger": 15, "unit": "minute" },
+        { "trigger": 1, "unit": "day" }
+      ]
+    },
+    {
+      "summary": "Recurring All Day Event",
+      "description": "Sample recurring all day event description; Use 'RRULE' value from https://icalendar.org/rrule-tool.html",
+      "allDayStart": "2026-07-04",
+      "categories": ["Category1", "Category2"],
+      "recurrenceRule": "RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=7;BYMONTHDAY=4;COUNT=10"
+    },
+    {
+      "summary": "Timed Event",
+      "description": "Sample one time timed event description",
+      "start": "2026-03-15T18:00:00-04:00",
+      "end": "2026-03-15T20:00:00-04:00",
+      "categories": ["Category3"],
+      "location": "Headquarters, Main Conference Room"
+    },
+    {
+      "summary": "Recurring Timed Event",
+      "description": "Sample recurring timed event description; Use 'RRULE' value from https://icalendar.org/rrule-tool.html",
+      "start": "2026-03-15T10:00:00-04:00",
+      "end": "2026-03-15T11:00:00-04:00",
+      "categories": ["Category4", "Category5"],
+      "location": "Engineering Building, Room 101",
+      "recurrenceRule": "RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=1;UNTIL=20270101T000000Z"
     }
   ]
 }

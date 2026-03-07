@@ -1,4 +1,3 @@
-//import { normalize, resolve } from 'node:path';
 import { resolve } from 'node:path';
 import Ajv, { ErrorObject, JSONSchemaType, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
@@ -27,14 +26,19 @@ export interface ICalTimedEvent extends ICalBaseEvent {
   start: string;
   end: string;
 }
+export type NotificationUnit = 'minute' | 'hour' | 'day' | 'week';
+export interface ICalNotification {
+  trigger: number;
+  unit: NotificationUnit;
+  emails?: string[];
+}
 export interface ICalBaseEvent {
   summary: string;
   description?: string;
   categories?: string[];
   location?: string;
   recurrenceRule?: string;
-  recurrenceDates?: string[];
-  exceptionDates?: string[];
+  notifications?: ICalNotification[];
 }
 export interface ICalBaseData {
   name: string;

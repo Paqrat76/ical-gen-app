@@ -81,6 +81,10 @@ describe('generateICalendarObject', () => {
           categories: ['Category'],
           location: 'Sample Location, 123 Main St, Anytown, USA',
           recurrenceRule: 'RRULE:FREQ=YEARLY;COUNT=10',
+          notifications: [
+            { trigger: 15, unit: 'minute' },
+            { trigger: 1, unit: 'day', emails: ['email1@example.com', 'email2@example.com'] },
+          ],
         },
       ],
     };
@@ -113,8 +117,8 @@ describe('generateICalendarObject', () => {
     expect(event?.start()).toStrictEqual('2026-02-24');
     expect(event?.summary()).toStrictEqual('All-Day Test Event');
     expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_TRANSPARENT);
+    expect(event?.alarms()).toMatchSnapshot();
     // Expected unused properties:
-    expect(event?.alarms()).toStrictEqual([]);
     expect(event?.attachments()).toStrictEqual([]);
     expect(event?.attendees()).toStrictEqual([]);
     expect(event?.busystatus()).toBeNull();
@@ -172,6 +176,10 @@ describe('generateICalendarObject', () => {
           categories: ['Category'],
           location: 'Sample Location, 123 Main St, Anytown, USA',
           recurrenceRule: 'RRULE:FREQ=YEARLY;COUNT=10',
+          notifications: [
+            { trigger: 15, unit: 'minute' },
+            { trigger: 1, unit: 'day', emails: ['email1@example.com', 'email2@example.com'] },
+          ],
         },
       ],
     };
@@ -201,8 +209,8 @@ describe('generateICalendarObject', () => {
     expect(event?.start()).toStrictEqual('2026-02-24T10:00:00-04:00');
     expect(event?.end()).toStrictEqual('2026-02-24T11:00:00-04:00');
     expect(event?.summary()).toStrictEqual('Timed Test Event');
+    expect(event?.alarms()).toMatchSnapshot();
     // Expected unused properties:
-    expect(event?.alarms()).toStrictEqual([]);
     expect(event?.attachments()).toStrictEqual([]);
     expect(event?.attendees()).toStrictEqual([]);
     expect(event?.busystatus()).toBeNull();

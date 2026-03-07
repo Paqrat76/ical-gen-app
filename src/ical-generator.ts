@@ -1,10 +1,38 @@
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { ICalCalendar, ICalCategory, ICalEvent, ICalEventClass, ICalEventTransparency } from 'ical-generator';
+import {
+  ICalAlarm,
+  ICalAlarmType,
+  ICalAttendeeData,
+  ICalAttendeeRole,
+  ICalCalendar,
+  ICalCategory,
+  ICalEvent,
+  ICalEventClass,
+  ICalEventTransparency,
+} from 'ical-generator';
 import { ICalAllDayEvent, ICalBaseData, ICalTimedEvent } from './json-schema-validator';
+import { isNonEmptyString } from './utils';
 
 export const ICAL_PRODUCT_ID = '-//Paqrat76//ical-gen-app//EN';
 export const ICAL_SCALE_GREGORIAN = 'GREGORIAN';
+
+/**
+ * An object that maps time units to their respective durations in seconds.
+ * The values are constant and represent the number of seconds in each time unit.
+ *
+ * Properties:
+ * - `minute`: The number of seconds in a minute.
+ * - `hour`: The number of seconds in an hour.
+ * - `day`: The number of seconds in a day.
+ * - `week`: The number of seconds in a week.
+ */
+const notificationUnitToSeconds = {
+  minute: 60,
+  hour: 60 * 60,
+  day: 60 * 60 * 24,
+  week: 60 * 60 * 24 * 7,
+} as const;
 
 /**
  * Generates a timestamp in ISO 8601 format without milliseconds.
@@ -40,11 +68,11 @@ function isAllDayEvent(event: ICalAllDayEvent | ICalTimedEvent): event is ICalAl
  * @returns {void} Does not return a value.
  */
 function applyOptionalFields(icalEvent: ICalEvent, event: ICalAllDayEvent | ICalTimedEvent): void {
-  if (event.description) {
+  if (isNonEmptyString(event.description)) {
     icalEvent.description(event.description);
   }
 
-  if (event.location) {
+  if (isNonEmptyString(event.location)) {
     icalEvent.location(event.location);
   }
 
@@ -53,7 +81,42 @@ function applyOptionalFields(icalEvent: ICalEvent, event: ICalAllDayEvent | ICal
     icalEvent.categories(categories);
   }
 
-  if (event.recurrenceRule) {
+  if (event.notifications?.length) {
+    const notifications = event.notifications.map((notification) => {
+      // NOTE: The ical-generator's ICalAlarm.trigger property expects positive seconds for notifications BEFORE the event.
+      const triggerSeconds = notification.trigger * notificationUnitToSeconds[notification.unit];
+
+      const alarm = new ICalAlarm(
+        {
+          trigger: triggerSeconds,
+          summary: event.summary,
+        },
+        icalEvent,
+      );
+
+      if (notification.emails?.length) {
+        alarm.type(ICalAlarmType.email);
+        const attendees: ICalAttendeeData[] = notification.emails.map((email: string) => {
+          // Add the email address and override the default role from REQ to NON.
+          return { email: email, role: ICalAttendeeRole.NON } satisfies ICalAttendeeData;
+        });
+        alarm.attendees(attendees);
+        if (isNonEmptyString(event.description)) {
+          // Used to set the email body. Summary is used to set the email subject.
+          alarm.description(event.description);
+        }
+      } else {
+        alarm.type(ICalAlarmType.display);
+        // Sets the alarm message if the alarm type is display to the event summary.
+        alarm.description(event.summary);
+      }
+
+      return alarm;
+    });
+    icalEvent.alarms(notifications);
+  }
+
+  if (isNonEmptyString(event.recurrenceRule)) {
     icalEvent.repeating(event.recurrenceRule);
   }
 }
@@ -98,7 +161,7 @@ export function generateICalendarObject(sourceData: ICalBaseData): ICalCalendar 
     scale: ICAL_SCALE_GREGORIAN,
   });
 
-  if (sourceData.description) {
+  if (isNonEmptyString(sourceData.description)) {
     calendar.description(sourceData.description);
   }
 

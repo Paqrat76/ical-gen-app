@@ -1,14 +1,12 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import ical, { ICalEventClass, ICalEventTransparency } from 'ical-generator';
+import ical, { ICalAlarmType, ICalEvent, ICalEventClass, ICalEventTransparency } from 'ical-generator';
 import { RRule, rrulestr } from 'rrule';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 
 describe('Experimentation Tests', () => {
   describe('Event Creation', () => {
-    // TODO: Add tests for start & end data/datetime values (want to use ISO 8601 values for these)
-
     it('should generate snapshot iCalendar', () => {
       // For snapshot testing, set the stamp value to a fixed date
       const tstamp = new Date(2025, 0, 1, 0, 0, 0, 0);
@@ -24,7 +22,7 @@ describe('Experimentation Tests', () => {
       expect(rrule0).toBeDefined();
       expect(rrule0.toString()).toStrictEqual(rruleStr0);
 
-      calendar.createEvent({
+      const newYearsEvent: ICalEvent = calendar.createEvent({
         stamp: tstamp,
         allDay: true,
         start: new Date(2026, 0, 1),
@@ -35,6 +33,9 @@ describe('Experimentation Tests', () => {
         transparency: ICalEventTransparency.TRANSPARENT,
         repeating: rrule0.toString(),
       });
+      newYearsEvent.createAlarm({ type: ICalAlarmType.display, trigger: 600 }); // 10 minutes before
+      newYearsEvent.createAlarm({ type: ICalAlarmType.display, trigger: 3600 }); // 1 hour before
+      newYearsEvent.createAlarm({ type: ICalAlarmType.display, trigger: 86400 }); // 1 day before
 
       const rruleStr1 = 'RRULE:FREQ=YEARLY;WKST=SU;BYDAY=MO;BYMONTH=1;BYWEEKNO=3';
       const rrule1: RRule = rrulestr(rruleStr1);

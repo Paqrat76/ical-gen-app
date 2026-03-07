@@ -7,7 +7,11 @@
       "description": "Sample one time all day event description",
       "allDayStart": "2026-11-11",
       "categories": ["Category"],
-      "location": "Sample Location, 123 Main St, Anytown, USA"
+      "location": "Sample Location, 123 Main St, Anytown, USA",
+      "notifications": [
+        { "trigger": 15, "unit": "minute" },
+        { "trigger": 1, "unit": "day", "emails": ["email1@example.com"] }
+      ]
     },
     {
       "summary": "Recurring All Day Event",
@@ -22,15 +26,15 @@
       "start": "2026-03-15T18:00:00-04:00",
       "end": "2026-03-15T20:00:00-04:00",
       "categories": ["Category3"],
-      "location": "Sample Location, 123 Main St, Anytown, USA"
+      "location": "Headquarters, Main Conference Room"
     },
     {
       "summary": "Recurring Timed Event",
-      "description": "Sample recurring timed event description",
-      "start": "2026-03-15T18:00:00-04:00",
-      "end": "2026-03-15T20:00:00-04:00",
+      "description": "Sample recurring timed event description; Use 'RRULE' value from https://icalendar.org/rrule-tool.html",
+      "start": "2026-03-15T10:00:00-04:00",
+      "end": "2026-03-15T11:00:00-04:00",
       "categories": ["Category4", "Category5"],
-      "location": "Sample Location, 123 Main St, Anytown, USA",
+      "location": "Engineering Building, Room 101",
       "recurrenceRule": "RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=1;UNTIL=20270101T000000Z"
     }
   ]

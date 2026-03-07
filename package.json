@@ -1,6 +1,6 @@
 {
   "name": "ical-gen-app",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Consumes JSON containing calendar event data and generates an iCalendar file",
   "keywords": [
     "node",
@@ -59,7 +59,7 @@
     "@jest/globals": "^30.2.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.5",
-    "eslint": "^10.0.2",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.15.0",
     "eslint-plugin-jsdoc": "^62.7.1",

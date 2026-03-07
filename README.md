@@ -22,5 +22,5 @@ or "every other week".
 
 ## Dependencies
 
-- [sebbo2002/ical-generator](https://www.npmjs.com/package/ical-generator) - Library with which you can very easily
-  create a valid iCal calendar
+- [sebbo2002/ical-generator](https://www.npmjs.com/package/ical-generator) - Library with which you can very easily create a valid iCal calendar
+  - [Alarms](https://github.com/sebbo2002/ical-generator/blob/develop/src/alarm.ts) - Set Notifications for events

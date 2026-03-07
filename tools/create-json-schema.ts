@@ -18,6 +18,15 @@ const iCalSchema = S.object()
     'Defines the JSON schema for the iCalendar JSON source file consumed by the Paqrat76/ical-gen-app CLI application',
   )
   .additionalProperties(false)
+  .definition(
+    'notification',
+    S.object()
+      .prop('trigger', S.integer().minimum(1))
+      .required()
+      .prop('unit', S.string().enum(['minute', 'hour', 'day', 'week']))
+      .required()
+      .prop('emails', S.array().items(S.string().format('email')).minItems(1)),
+  )
   .definition('allDayEvent', S.object().prop('allDayStart', S.string().format('date')).required())
   .definition(
     'timedEvent',
@@ -36,6 +45,7 @@ const iCalSchema = S.object()
       .prop('description', S.string())
       .prop('categories', S.array().items(S.string()))
       .prop('location', S.string())
+      .prop('notifications', S.array().items(S.ref('#/definitions/notification')).minItems(1))
       // NOTE: Use the [RRULE Tool](https://icalendar.org/rrule-tool.html.html) to create recurrence rules.
       // Prepend "RRULE:" to the generated recurrence rule.
       .prop('recurrenceRule', S.string().pattern(`^RRULE:.+$`)),
