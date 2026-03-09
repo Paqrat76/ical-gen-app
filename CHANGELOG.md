@@ -21,6 +21,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2026-03-09
+
+### Added
+
+- README.md overview content describing project purpose, usage scenarios, and documentation links
+- User guide sections for prerequisites, global npm installation, and expanded CLI usage examples
+- Additional documentation references for iCalendar validation and RRULE authoring tools
+
+### Changed
+
+- CLI option logging now outputs only user-provided options instead of internal application options
+- Downgraded the minimum Node.js version to 22.x for wider user invironments
+- Documentation updated to clarify supported Node.js version, installation flow, output behavior, and source file path handling
+- Updated dependencies
+
+
 ## [0.6.0] - 2026-03-07
 
 ### Added

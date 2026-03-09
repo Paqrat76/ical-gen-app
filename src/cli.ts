@@ -3,7 +3,7 @@
 import { Command } from '@commander-js/extra-typings';
 import { textSync } from 'figlet';
 import { cyan, red } from 'kleur';
-import { CliOptions, ICalGeneratorApp } from './app';
+import { CliOptions, ICalGeneratorApp, UserCliOptions } from './app';
 import { toError, OS_EOL } from './utils';
 
 import * as pkgJson from '../package.json';
@@ -141,7 +141,13 @@ function buildCommandInstance(
     .action((options) => {
       icalGenOptions.sourceFile = options.sourceFile;
       icalGenOptions.debug = options.debug ?? false;
-      console.log(cyan(`Executed with options ${JSON.stringify(icalGenOptions)}${OS_EOL}`));
+
+      const userCliOptions = {
+        sourceFile: icalGenOptions.sourceFile,
+        debug: icalGenOptions.debug,
+      } satisfies UserCliOptions;
+
+      console.log(cyan(`Executed with user options ${JSON.stringify(userCliOptions)}${OS_EOL}`));
     });
 
   return program;

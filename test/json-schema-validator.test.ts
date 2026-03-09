@@ -94,7 +94,7 @@ describe('validateICalendarJson', () => {
     expect(result.errors).toEqual([expectedError]);
   });
 
-  it('should return invalid result for invalid date/datetime formats', () => {
+  it('should return invalid result for invalid date/datetime content', () => {
     const invalidAllDayEvent = {
       name: 'Invalid Event Calendar',
       events: [
@@ -117,6 +117,39 @@ describe('validateICalendarJson', () => {
           summary: 'Invalid Timed Event',
           start: 'invalid-datetime-format',
           end: 'invalid-datetime-format',
+        },
+      ],
+    };
+    result = validateICalendarJson(invalidTimedEvent);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchSnapshot();
+  });
+
+  it('should return invalid result for invalid date/datetime formats', () => {
+    const invalidAllDayEvent = {
+      name: 'Invalid Event Calendar',
+      events: [
+        {
+          summary: 'Invalid AllDay Event',
+          allDayStart: 'March 15, 2026',
+        },
+      ],
+    };
+    let result: ICalValidationResult = validateICalendarJson(invalidAllDayEvent);
+    expect(result.isValid).toBe(false);
+    expect(result.message).toBe(INVALID_ICAL_SCHEMA_VALIDATION_MESSAGE);
+    expect(result.errors).toBeDefined();
+    expect(result.errors).toMatchSnapshot();
+
+    const invalidTimedEvent = {
+      name: 'Invalid Event Calendar',
+      events: [
+        {
+          summary: 'Invalid Timed Event',
+          start: '2026-03-15T13:12.34.567',
+          end: '2026-03-15T14:12.34 EDT',
         },
       ],
     };
