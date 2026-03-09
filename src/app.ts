@@ -19,6 +19,7 @@ export interface CliOptions {
   debug?: boolean;
   appVersion: string;
 }
+export type UserCliOptions = Omit<CliOptions, 'appVersion'>;
 
 /**
  * The `ICalGeneratorApp` class is responsible for converting a JSON data file into an iCalendar

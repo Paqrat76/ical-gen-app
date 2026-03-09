@@ -1,26 +1,49 @@
 # ical-gen-app
 
-The ical-gen-app command line application consumes a JSON file containing calendar event data and generates an iCalendar
-file.
+The `ical-gen-app` project provides a command-line interface (CLI) application (`iCalGenerator`) that consumes a JSON
+file containing calendar event data and generates an iCalendar (`.ics`) file.
 
-The intent is to use a JSON source file containg event details to generate an iCalendar file (e.g., `myCalendar.ics`)
-containing multiple fixed and/or recurring events for calendars that can be imported into various calendar applications.
-These calendars can be used for events such as holidays or family dates (e.g., birthdays, anniversaries, etc.) that are
-defined as specifying dates only and require no interactions such as invitations or reminders.
-Additionally, events having a start and end datetime, such as sporting events or any event requiring a specific time slot,
-can be easily added to the calendar.
-Each event type can also support the definition of a recurrence rule such as "yearly" or "yearly on the 15th of February"
-or "every other week".
+## Overview
+
+The `iCalGenerator` CLI application is designed to generate iCalendar files (e.g., `myCalendar.ics`) conforming to
+appropriate calendar componants defined in the [iCalendar Specification](https://www.rfc-editor.org/rfc/rfc5545).
+This CLI application takes as input a path to a JSON source file containing event details.
+The JSON source file was designed to be a simple, easy-to-read, and easy-to-write format for calendar event data.
+It must adhere to the application-specific [JSON Schema](./src/schema/ical-gen-app-schema.json).
+
+The intent is to generate calendars that can be imported into various calendar applications.
+Example use cases include calendars containing events for:
+
+- Family's birthdays and anniversaries that can be provided to all family members
+- Sports team's practices and games that can be provided to all team members
+- Curated set of specific holidays
+
+These generated calendars DO NOT support scheduling or event management such as sending event requests, managing attendees,
+or updating existing events.
+
+## Description
+
+The `iCalGenerator` CLI application is a simple tool that:
+
+- Reads the provided JSON source file
+- Validates the JSON against the application-specific JSON Schema (using [Ajv](https://ajv.js.org/))
+- Generates an iCalendar object (using [ical-generator](https://www.npmjs.com/package/ical-generator))
+- Writes the generated iCalendar object to a file in a predetermined output path
+
+If desired, this generated iCalendar file can be validated using the [iCalendar Validator](https://icalendar.org/validator.html)
+before importing it into a calendar application such as Google Calendar or Apple Calendar.
+
+## `iCalGenerator` CLI Documentation
+
+- [JSON Schema Documentation for iCalGenerator CLI](./docs/schema-documentation.md)
+- [User Guide for iCalGenerator CLI](./docs/user-guide.md)
 
 ## References
 
 - [iCalendar.org](https://icalendar.org)
+  - [RRULE Tool](https://icalendar.org/rrule-tool.html) - tool to generate repeating rule strings
+  - [iCalendar Validator](https://icalendar.org/validator.html) - tool to validate iCalendar data
 - [RFC-5545](https://www.rfc-editor.org/rfc/rfc5545)
   - [RFC 7986](https://www.rfc-editor.org/rfc/rfc7986)
 - [iCalendar (RFC 5545)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/)
   - [iCalendar (RFC 7986)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-7986/)
-
-## Dependencies
-
-- [sebbo2002/ical-generator](https://www.npmjs.com/package/ical-generator) - Library with which you can very easily create a valid iCal calendar
-  - [Alarms](https://github.com/sebbo2002/ical-generator/blob/develop/src/alarm.ts) - Set Notifications for events

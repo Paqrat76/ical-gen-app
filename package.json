@@ -1,6 +1,6 @@
 {
   "name": "ical-gen-app",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Consumes JSON containing calendar event data and generates an iCalendar file",
   "keywords": [
     "node",
@@ -50,7 +50,7 @@
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "commander": "^14.0.3",
-    "figlet": "^1.10.0",
+    "figlet": "^1.11.0",
     "ical-generator": "^10.0.0",
     "kleur": "^4.1.5"
   },
@@ -79,8 +79,8 @@
     "typescript-eslint": "^8.56.1"
   },
   "engines": {
-    "node": ">=24.0.0",
-    "npm": ">=11.3.0"
+    "node": ">=22.0.0",
+    "npm": ">=10.5.0"
   },
   "lint-staged": {
     "*.{json,yaml}": "prettier --write",

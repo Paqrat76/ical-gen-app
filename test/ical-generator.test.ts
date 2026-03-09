@@ -141,7 +141,7 @@ describe('generateICalendarObject', () => {
       name: 'Eventful Calendar',
       events: [
         {
-          start: '2026-02-24T10:00:00-04:00',
+          start: '2026-02-24T10:00:00.123-04:00',
           end: '2026-02-24T11:00:00-04:00',
           summary: 'Test Event',
         },
@@ -158,7 +158,7 @@ describe('generateICalendarObject', () => {
     expect(event?.id()).toMatch(REGEX_ID);
     expect(event?.stamp()).toMatch(REGEX_STAMP);
     expect(event?.transparency()).toStrictEqual(FIXED_TRANSPARENCY_OPAQUE);
-    expect(event?.start()).toStrictEqual('2026-02-24T10:00:00-04:00');
+    expect(event?.start()).toStrictEqual('2026-02-24T10:00:00.123-04:00');
     expect(event?.end()).toStrictEqual('2026-02-24T11:00:00-04:00');
     expect(event?.summary()).toStrictEqual('Test Event');
   });
