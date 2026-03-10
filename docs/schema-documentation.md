@@ -1,4 +1,6 @@
-# JSON Schema Documentation for iCalGenerator CLI
+---
+title: JSON Schema Documentation for iCalGenerator CLI
+---
 
 This document provides a detailed description of the JSON schema used by the `iCalGenerator` CLI application to parse
 the source data JSON file used for generating iCalendar (`.ics`) files.

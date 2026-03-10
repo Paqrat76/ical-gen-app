@@ -1,4 +1,6 @@
-# ical-gen-app
+---
+title: iCalGenerator CLI Documentation
+---
 
 The `ical-gen-app` project provides a command-line interface (CLI) application (`iCalGenerator`) that consumes a JSON
 file containing calendar event data and generates an iCalendar (`.ics`) file.
