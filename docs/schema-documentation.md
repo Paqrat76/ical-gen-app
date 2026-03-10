@@ -1,4 +1,5 @@
 ---
+id: schema-doc
 title: JSON Schema Documentation for iCalGenerator CLI
 ---
 

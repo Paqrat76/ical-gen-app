@@ -1,4 +1,5 @@
 ---
+id: index
 title: iCalGenerator CLI Documentation
 ---
 

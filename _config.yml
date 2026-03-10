@@ -12,3 +12,8 @@ repo: "https://github.com/Paqrat76/ical-gen-app"
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
 - jekyll-remote-theme
+
+sidebar:
+  - index
+  - schema-doc
+  - usage-doc
