@@ -9,7 +9,7 @@ The `iCalGenerator` CLI application is designed to generate iCalendar files (e.g
 appropriate calendar componants defined in the [iCalendar Specification](https://www.rfc-editor.org/rfc/rfc5545).
 This CLI application takes as input a path to a JSON source file containing event details.
 The JSON source file was designed to be a simple, easy-to-read, and easy-to-write format for calendar event data.
-It must adhere to the application-specific [JSON Schema](./src/schema/ical-gen-app-schema.json).
+It must adhere to the application-specific [JSON Schema](../src/schema/ical-gen-app-schema.json).
 
 The intent is to generate calendars that can be imported into various calendar applications.
 Example use cases include calendars containing events for:
@@ -35,8 +35,8 @@ before importing it into a calendar application such as Google Calendar or Apple
 
 ## `iCalGenerator` CLI Documentation
 
-- [JSON Schema Documentation for iCalGenerator CLI](./docs/schema-documentation.md)
-- [User Guide for iCalGenerator CLI](./docs/user-guide.md)
+- [JSON Schema Documentation for iCalGenerator CLI](./schema-documentation.md)
+- [User Guide for iCalGenerator CLI](./user-guide.md)
 
 ## References
 

@@ -21,6 +21,7 @@ or updating existing events.
 - [Input Data Schema](#input-data-schema)
 - [Examples](#examples)
 - [Debugging](#debugging)
+- [References](#references)
 
 ---
 
@@ -160,7 +161,7 @@ This will provide more detailed output regarding the options being used and any 
 - [iCalendar.org](https://icalendar.org)
   - [RRULE Tool](https://icalendar.org/rrule-tool.html) - tool to generate repeating rule strings
   - [iCalendar Validator](https://icalendar.org/validator.html) - tool to validate iCalendar data
-- [RFC-5545](https://www.rfc-editor.org/rfc/rfc5545)
-  - [RFC 7986](https://www.rfc-editor.org/rfc/rfc7986)
-- [iCalendar (RFC 5545)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/)
-  - [iCalendar (RFC 7986)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-7986/)
+  - [iCalendar (RFC 5545)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/)
+    - [iCalendar (RFC 7986)](https://icalendar.org/RFC-Specifications/iCalendar-RFC-7986/)
+- [Internet Calendaring and Scheduling Core Object Specification (iCalendar) - RFC-5545](https://www.rfc-editor.org/rfc/rfc5545)
+  - [New Properties for iCalendar - RFC 7986](https://www.rfc-editor.org/rfc/rfc7986)
