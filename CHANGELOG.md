@@ -21,6 +21,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0] - 2026-03-10
+
+### Added
+
+- docs/index.md for GitHub Pages documentation hosting
+
+### Changed
+
+- Updated project version to `1.0.0`
+- Updated development dependencies
+- Updated documentation for GitHub Pages documentation
+- Refined README.md reference links for RFC 5545 and RFC 7986 documentation
+
+
 ## [0.7.0] - 2026-03-09
 
 ### Added
@@ -32,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - CLI option logging now outputs only user-provided options instead of internal application options
-- Downgraded the minimum Node.js version to 22.x for wider user invironments
+- Downgraded the minimum Node.js version to `22.x` for wider user environments
+- Updated minimum npm version requirement to `10.5.0`
 - Documentation updated to clarify supported Node.js version, installation flow, output behavior, and source file path handling
 - Updated dependencies
 
