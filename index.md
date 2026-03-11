@@ -36,6 +36,11 @@ The `iCalGenerator` CLI application is a simple tool that:
 If desired, this generated iCalendar file can be validated using the [iCalendar Validator](https://icalendar.org/validator.html)
 before importing it into a calendar application such as Google Calendar or Apple Calendar.
 
+## Documentation
+
+- [UserGuide](./docs/user-guide.md)
+- [JSON Schema Documentation](./docs/schema-documentation.md)
+
 ## References
 
 - [iCalendar.org](https://icalendar.org)
