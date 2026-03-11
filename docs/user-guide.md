@@ -3,9 +3,9 @@ id: usage-doc
 title: User Guide
 ---
 
-# User Guide
-
 [**Home**](https://paqrat76.github.io/ical-gen-app/index.html)
+
+# User Guide
 
 `iCalGenerator` is a command-line interface (CLI) tool designed to generate iCalendar (`.ics`) files from JSON data files.
 
