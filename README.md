@@ -35,8 +35,7 @@ before importing it into a calendar application such as Google Calendar or Apple
 
 ## `iCalGenerator` CLI Documentation
 
-- [JSON Schema Documentation for iCalGenerator CLI](./docs/schema-documentation.md)
-- [User Guide for iCalGenerator CLI](./docs/user-guide.md)
+[iCalGenerator CLI Documentation](https://paqrat76.github.io/ical-gen-app/)
 
 ## References
 
