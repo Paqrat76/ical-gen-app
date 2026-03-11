@@ -95,7 +95,7 @@ main();
 function createCliCommand(): Command {
   const program = new Command();
 
-  const docs = `${OS_EOL}User Guide: ./docs/user-guide.md${OS_EOL}JSON Schema Documentation: ./docs/schema-documentation.md${OS_EOL}`;
+  const docs = `${OS_EOL}User Guide: https://paqrat76.github.io/ical-gen-app/docs/user-guide.html${OS_EOL}JSON Schema Documentation: https://paqrat76.github.io/ical-gen-app/docs/schema-documentation.html${OS_EOL}`;
 
   program
     .name(CLI_NAME)
