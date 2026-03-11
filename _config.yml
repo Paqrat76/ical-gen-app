@@ -11,9 +11,6 @@ repo: "https://github.com/Paqrat76/ical-gen-app"
 plugins:
 - jekyll-remote-theme
 
-exclude:
-  - README.md
-
 # Theme settings
 remote_theme: zendesk/jekyll-theme-zendesk-garden@v0.7.3
 search_enabled: false
