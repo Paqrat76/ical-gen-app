@@ -3,7 +3,7 @@ id: usage-doc
 title: User Guide
 ---
 
-[**Home**](https://paqrat76.github.io/ical-gen-app/)
+[**Home**](https://paqrat76.github.io/ical-gen-app/index.html)
 
 `iCalGenerator` is a command-line interface (CLI) tool designed to generate iCalendar (`.ics`) files from JSON data files.
 
@@ -171,4 +171,4 @@ This will provide more detailed output regarding the options being used and any 
 - [Internet Calendaring and Scheduling Core Object Specification (iCalendar) - RFC-5545](https://www.rfc-editor.org/rfc/rfc5545)
   - [New Properties for iCalendar - RFC 7986](https://www.rfc-editor.org/rfc/rfc7986)
 
-[**Home**](https://paqrat76.github.io/ical-gen-app/)
+[**Home**](https://paqrat76.github.io/ical-gen-app/index.html)

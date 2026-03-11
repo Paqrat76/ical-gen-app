@@ -3,7 +3,7 @@ id: schema-doc
 title: JSON Schema Documentation
 ---
 
-[**Home**](https://paqrat76.github.io/ical-gen-app/)
+[**Home**](https://paqrat76.github.io/ical-gen-app/index.html)
 
 This document provides a detailed description of the JSON schema used by the `iCalGenerator` CLI application to parse
 the source data JSON file used for generating iCalendar (`.ics`) files.
@@ -193,4 +193,4 @@ The following is a sample JSON object with all supported iCalendar properties.
 }
 ```
 
-[**Home**](https://paqrat76.github.io/ical-gen-app/)
+[**Home**](https://paqrat76.github.io/ical-gen-app/index.html)
