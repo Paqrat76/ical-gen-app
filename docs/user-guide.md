@@ -115,7 +115,7 @@ Executed with user options {"sourceFile":"<path-to-json-file>","debug":false}
 The source JSON file must conform to the `ical-gen-app` project schema. This ensures all events are correctly parsed
 and formatted into the final `.ics` file.
 
-See the [JSON Schema Documentation for iCalGenerator CLI](schema-documentation.md) for more information on the expected
+See the [JSON Schema Documentation](schema-documentation.md) for more information on the expected
 JSON structure, including support for:
 
 - All-Day Events
