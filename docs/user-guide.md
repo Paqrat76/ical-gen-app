@@ -47,7 +47,7 @@ Installing Node.js:
 Assuming you have Node.js (version 22 or higher) installed, you can install the CLI tool globally using npm:
 
 ```bash
-npm install -g @paqrat76/ical-gen-app
+npm install -g ical-gen-app
 ```
 
 You can then use the CLI directly:
