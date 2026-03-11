@@ -1,6 +1,6 @@
 ---
 id: schema-doc
-title: JSON Schema Documentation for iCalGenerator CLI
+title: JSON Schema Documentation
 ---
 
 This document provides a detailed description of the JSON schema used by the `iCalGenerator` CLI application to parse
